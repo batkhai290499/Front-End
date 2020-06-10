@@ -7,8 +7,7 @@ import {
 import MenuBar from '../component/layout/MenuBar';
 import Header from '../component/layout/Header';
 import Footer from '../component/layout/Footer';
-
-
+import bend from '../component/action/bend'
 
 class router extends Component {
     render() {
@@ -16,7 +15,7 @@ class router extends Component {
             <div>
                 <Header />
                 <MenuBar />
-                <Route exact path="/login" />
+                <Route path="/bend" component={bend} />
                 <Footer />
             </div>
         );

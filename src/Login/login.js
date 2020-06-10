@@ -69,7 +69,6 @@ class login extends Component {
         //     return;
         // }
 
-
         if (results.status !== 200) {
             this.setState({ 'error': 1 })
             return;
@@ -77,9 +76,12 @@ class login extends Component {
         else {
             if (results.data.news.length > 0) {
                 localStorage.setItem("isLogin", 'true');
-                this.props.history.push('/');
+                this.props.history.push('/bend');
+                console.log("<3");
+                
             } else {
-                this.setState({ 'error': 1 })
+                this.setState({ 'error': 1 });
+                alert("Login Fail <3")
             }
 
         }
@@ -124,9 +126,7 @@ class login extends Component {
                                         <label htmlFor="user-checkbox">Remember me</label>
                                     </div>
                                 </div>
-
                             </div>
-
                             <button type="button" className="btn btn-light btn-block" onClick={() => {
                                 this.CheckLogin();
                             }}>Sign In</button>
