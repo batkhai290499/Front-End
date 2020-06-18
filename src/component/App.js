@@ -10,7 +10,7 @@ function App() {
   return (
       <Router>
         <Switch>
-          <Route exact path="/login" component={login} />
+          <Route exact path="/" component={login} />
           <RouterReact />
         </Switch>
       </Router>

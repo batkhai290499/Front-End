@@ -1,0 +1,200 @@
+import React, { Component } from 'react';
+import Axios from 'axios';
+
+class department extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            department: [],
+            id_department: '',
+            name: '',
+        }
+    }
+
+    componentDidMount() {
+        Axios.get('/api/department/views')
+            .then(res => {
+                if (res.status == 200) {
+
+
+                    const department = res.data;
+                    this.setState({
+                        department: department.department,
+                    })
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    };
+
+    handleInputChange = (event) => {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+            [name]: value
+        });
+        //console.log(this.state.name);
+
+    };
+
+    handleInsertDepartment = (event) => {
+        //event.preventDefault();
+
+        const newDepartment = {
+            //id_department: '',
+            name: this.state.name,
+        };
+        //console.log(this.state.name);
+
+        Axios.post('/api/department/insert', newDepartment)
+            .then(res => {
+                let department = this.state.department;
+                department = [newDepartment, ...department];
+                this.setState({ department: department });
+            })
+            .catch(error => console.log(error));
+    };
+
+    getDataDepartment = (item) => {
+        this.setState({
+            id_department: item.id_department,
+            name: item.name
+        })
+    }
+
+    handleEditDepartment = (event) => {
+        event.preventDefault();
+
+        const newEditDepartment = {
+            id_department: department.id_department,
+            name: this.state.name,
+        };
+        console.log(this.state.id_department);
+
+
+        Axios.post('/api/department/edit', newEditDepartment)
+            .then(res => {
+                let key = this.state.id_department;
+                this.setState(prevState => ({
+                    department: prevState.department.map(
+                        elm => elm.id_department === key ? {
+                            ...elm,
+                            name: this.state.name
+                        } : elm
+                    )
+                }))
+                //console.log(this.state.name);
+            })
+            .catch(error => console.log(error));
+    };
+    render() {
+        return (
+            <div>
+                <div className="content-wrapper">
+                    <div className="container-fluid">
+                        <div className="row ">
+                            <div className="col-lg-2">
+                                {/* Large Size Modal */}
+                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">Create Department</button>
+                                {/* Modal */}
+                                <div className="modal fade" id="formemodal" style={{ display: 'none' }} aria-hidden="true">
+                                    <div className="modal-dialog modal-md modal-dialog-centered">
+                                        <div className="modal-content">
+                                            <div className="card">
+                                                <div className="card-header text-uppercase">Create Department</div>
+
+                                                <div className="card-body">
+                                                    <form onSubmit={this.handleInsertDepartment}>
+                                                        <div className="row">
+                                                            <div className="col-12 col-lg-12 col-xl-12">
+                                                                <div className="form-group row">
+                                                                    <label className="col-sm-12 col-form-label">Name of Department</label>
+                                                                    <div className="col-sm-10">
+                                                                        <input type="text" name="name" className="form-control" placeholder="Jhon Deo"
+                                                                            onChange={this.handleInputChange} />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>{/*end row*/}
+                                                        <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Submit</button>
+
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-lg-12">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h5 className="card-title">List Department</h5>
+                                        <div className="table-responsive">
+                                            <table className="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">No.</th>
+                                                        <th scope="col">Name Department</th>
+                                                        <th scope="col">Edit</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {this.state.department.map((item, key) =>
+                                                        <tr key={key}>
+                                                            <th>{key + 1}</th>
+                                                            <th>{item.name}</th>
+                                                            <th>
+                                                                <button type="button" className="btn btn-light waves-effect waves-light m-1" 
+                                                                data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataDepartment(item)}> <i className="fa fa-edit" /></button>
+                                                            </th>
+                                                        </tr>)}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Modal */}
+                                <div className="modal fade" id="formemodaledit" style={{ display: 'none' }} aria-hidden="true">
+                                    <div className="modal-dialog modal-md modal-dialog-centered">
+                                        <div className="modal-content">
+                                            <div className="card">
+                                                <div className="card-header text-uppercase">Edit Department</div>
+
+                                                <div className="card-body">
+                                                    <form onSubmit={this.handleEditDepartment}>
+                                                        <div className="row">
+                                                            <div className="col-12 col-lg-12 col-xl-12">
+                                                                <div className="form-group row">
+                                                                    <label className="col-sm-12 col-form-label">Edit Name of Department</label>
+                                                                    <div className="col-sm-10">
+                                                                        <input type="text" name="name" className="form-control" placeholder={this.state.name}
+                                                                            onChange={this.handleInputChange} value={this.state.name} />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>{/*end row*/}
+                                                        <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Edit</button>
+
+                                                    </form>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+}
+
+export default department;

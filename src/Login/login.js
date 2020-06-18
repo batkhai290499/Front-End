@@ -48,7 +48,7 @@ class login extends Component {
     // }
 
     CheckLogin = async (e) => {
-        let results = await Axios.post('http://localhost:4000/api/news/login', {
+        let results = await Axios.post('/api/account/login', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -60,7 +60,7 @@ class login extends Component {
             }
         });
         console.log(results);
-        
+
         // if ( results.length() !== 0){
         //     localStorage.setItem("isLogin", 'true');
         //     this.props.history.push('/');
@@ -78,7 +78,7 @@ class login extends Component {
                 localStorage.setItem("isLogin", 'true');
                 this.props.history.push('/bend');
                 console.log("<3");
-                
+
             } else {
                 this.setState({ 'error': 1 });
                 alert("Login Fail <3")
@@ -100,9 +100,10 @@ class login extends Component {
                             <div className="form-group">
                                 <label htmlFor="exampleInputUsername" className="sr-only">Username</label>
                                 <div className="position-relative has-icon-right">
-                                    <input type="text" id="exampleInputUsername" name="username" className="form-control input-shadow" placeholder="Enter Username" onChange={(e) => {
-                                        this.username = e.target.value;
-                                    }} />
+                                    <input type="text" id="exampleInputUsername" name="username" className="form-control input-shadow" placeholder="Enter Username"
+                                        onChange={(e) => {
+                                            this.username = e.target.value;
+                                        }} />
                                     <div className="form-control-position">
                                         <i className="icon-user" />
                                     </div>
@@ -111,9 +112,10 @@ class login extends Component {
                             <div className="form-group">
                                 <label htmlFor="exampleInputPassword" className="sr-only">Password</label>
                                 <div className="position-relative has-icon-right">
-                                    <input type="password" id="exampleInputPassword" name="password" className="form-control input-shadow" placeholder="Enter Password" onChange={(e) => {
-                                        this.password = e.target.value;
-                                    }} />
+                                    <input type="password" id="exampleInputPassword" name="password" className="form-control input-shadow" placeholder="Enter Password"
+                                        onChange={(e) => {
+                                            this.password = e.target.value;
+                                        }} />
                                     <div className="form-control-position">
                                         <i className="icon-lock" />
                                     </div>

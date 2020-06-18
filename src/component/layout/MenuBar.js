@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { NavLink } from 'react-router-dom';
 class MenuBar extends Component {
     render() {
         return (
@@ -14,16 +14,17 @@ class MenuBar extends Component {
                     <ul className="sidebar-menu do-nicescrol">
                         <li className="sidebar-header">MAIN NAVIGATION</li>
                         <li>
-                            <a href="index.html">
-                                <i className="zmdi zmdi-view-dashboard" /> <span>Home</span>
-                            </a>
+                            <NavLink to="/bend">
+                                <i className="zmdi zmdi-view-dashboard" /> <span>Account</span>
+                            </NavLink>
+
                         </li>
                         <li>
-                            <a href="icons.html">
-                                <i className="zmdi zmdi-invert-colors" /> <span>Management</span>
-                            </a>
+                            <NavLink to="/department">
+                                <i className="zmdi zmdi-invert-colors" /> <span>Department</span>
+                            </NavLink>
                         </li>
-                        <li>
+                        {/* <li>
                             <a href="forms.html">
                                 <i className="zmdi zmdi-format-list-bulleted" /> <span>Forms</span>
                             </a>
@@ -53,7 +54,7 @@ class MenuBar extends Component {
                             <a href="register.html" >
                                 <i className="zmdi zmdi-account-circle" /> <span>Registration</span>
                             </a>
-                        </li>
+                        </li> */}
                         {/* <li>
                             <a href="https://themeforest.net/item/dashtreme-multipurpose-bootstrap4-admin-template/23059455"  className="pro-btn">
                                 <i className="zmdi zmdi-cloud-upload" /> <span>Upgrade To PRO</span>

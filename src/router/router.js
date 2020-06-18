@@ -8,6 +8,7 @@ import MenuBar from '../component/layout/MenuBar';
 import Header from '../component/layout/Header';
 import Footer from '../component/layout/Footer';
 import bend from '../component/action/bend'
+import department from '../component/action/department';
 
 class router extends Component {
     render() {
@@ -16,6 +17,7 @@ class router extends Component {
                 <Header />
                 <MenuBar />
                 <Route path="/bend" component={bend} />
+                <Route path="/department" component={department} />
                 <Footer />
             </div>
         );
