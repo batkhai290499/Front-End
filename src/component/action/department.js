@@ -14,9 +14,7 @@ class department extends Component {
     componentDidMount() {
         Axios.get('/api/department/views')
             .then(res => {
-                if (res.status == 200) {
-
-
+                if (res.status === 200) {
                     const department = res.data;
                     this.setState({
                         department: department.department,
@@ -72,7 +70,6 @@ class department extends Component {
         };
         console.log(this.state.id_department);
 
-
         Axios.post('/api/department/edit', newEditDepartment)
             .then(res => {
                 let key = this.state.id_department;
@@ -88,6 +85,23 @@ class department extends Component {
             })
             .catch(error => console.log(error));
     };
+
+    deleteDepartment = (item) => {
+        const departmentId = { id_department: item.id_department };
+        //console.log(departmentId);
+        
+        //console.log(newsId);
+        Axios.post('api/department/delete', departmentId)
+            .then(res => {
+                this.setState(
+                    prevState => ({
+                        department: prevState.department.filter(elm => elm.id_department !== item.id_department)
+                    })
+                );
+
+            })
+            .catch(error => console.log(error));
+    }
     render() {
         return (
             <div>
@@ -139,7 +153,7 @@ class department extends Component {
                                                     <tr>
                                                         <th scope="col">No.</th>
                                                         <th scope="col">Name Department</th>
-                                                        <th scope="col">Edit</th>
+                                                        <th scope="col">Function</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -148,9 +162,33 @@ class department extends Component {
                                                             <th>{key + 1}</th>
                                                             <th>{item.name}</th>
                                                             <th>
-                                                                <button type="button" className="btn btn-light waves-effect waves-light m-1" 
-                                                                data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataDepartment(item)}> <i className="fa fa-edit" /></button>
+                                                                <button type="button" className="btn btn-light waves-effect waves-light m-1"
+                                                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataDepartment(item)}> <i className="fa fa-edit" /></button>
+                                                                <button type="button" className="btn btn-light waves-effect waves-light m-1"
+                                                                    data-toggle="modal" data-target="#modal-animation-10" onClick={() => this.deleteDepartment(item)}> <i className="fa fa-times" /></button>
+                                                                {/* <div className="modal fade" id="modal-animation-10" style={{ display: 'none' }} aria-hidden="true">
+                                                                    <div className="modal-dialog modal-dialog-centered">
+                                                                        <div className="modal-content animated bounceIn">
+                                                                            <div className="modal-header">
+                                                                                <h5 className="modal-title">Alert</h5>
+                                                                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                                                                    <span aria-hidden="true">×</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div className="modal-body">
+                                                                                <p>Do you want delete {this.state.name}</p>
+                                                                            </div>
+                                                                            <div className="modal-footer">
+                                                                                <button type="button" className="btn btn-light" data-dismiss="modal"><i className="fa fa-times" /> No</button>
+                                                                                <button type="button" className="btn btn-white" onClick={() => this.deleteDepartment(item)}><i className="fa fa-square" /> Yes</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div> */}
                                                             </th>
+
+
+                                                            {/* onClick={() => this.deleteDepartment(item)} */}
                                                         </tr>)}
                                                 </tbody>
                                             </table>
@@ -188,6 +226,8 @@ class department extends Component {
                                         </div>
                                     </div>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>

@@ -12,7 +12,7 @@ class Bend extends Component {
     componentDidMount() {
         axios.get('/api/account/views')
             .then(res => {
-                if (res.status == 200) {
+                if (res.status === 200) {
                     const news = res.data;
                     this.setState({ news: news.news });
                 }
@@ -38,7 +38,7 @@ class Bend extends Component {
                                         <div className="modal-content">
                                             <div className="card">
                                                 <div className="card-header text-uppercase">Create Account</div>
-                                                
+
                                                 <div className="card-body">
                                                     <form>
                                                         <div className="row">
@@ -114,7 +114,7 @@ class Bend extends Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            
+
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
                                                                     <label className="col-sm-3 col-form-label">Position</label>
@@ -123,7 +123,7 @@ class Bend extends Component {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            
+
                                                         </div>{/*end row*/}
                                                     </form>
                                                 </div>

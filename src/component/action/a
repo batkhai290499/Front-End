@@ -1,0 +1,13 @@
+handleDelete = (item) => {
+  const newsId = {
+    id: item.id
+  };
+
+  axios.post('/api/delete', newsId)
+  .then(res => {
+    this.setState(prevState => ({
+      news: prevState.news.filter(el => el.id !== item.id )
+    }));
+  })
+  .catch(error => console.log(error));
+}
