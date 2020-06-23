@@ -1,7 +1,17 @@
 import React, { Component } from 'react'
 
 export default class Header extends Component {
+
+    logout() {
+        localStorage.clear();
+        window.location.href = '/';
+    }
     render() {
+        var storedName = localStorage.getItem('isLogin');
+
+        if (storedName !== 'true') {
+            window.location.href = '/';
+        } 
         return (
 
             <header className="topbar-nav">
@@ -60,7 +70,7 @@ export default class Header extends Component {
                                 <li className="dropdown-divider" />
                                 <li className="dropdown-item"><i className="icon-settings mr-2" /> Setting</li>
                                 <li className="dropdown-divider" />
-                                <li className="dropdown-item"><i className="icon-power mr-2" /> Logout</li>
+                                <li className="dropdown-item"><i className="icon-power mr-2" /> <a onClick={() => this.logout()}>Logout</a> </li>
                             </ul>
                         </li>
                     </ul>

@@ -2,33 +2,31 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import swal from 'sweetalert';
 
-class department extends Component {
+class salary extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            department: [],
-            id_department: '',
-            name: '',
+            salary: [],
+            id_position: '',
+            money: '',
+            id_salary: ''
         }
     }
-
     componentDidMount() {
-        Axios.get('/api/department/views')
+        Axios.get('/api/salary/views')
             .then(res => {
                 if (res.status === 200) {
-                    
-                    const department = res.data;
-                    //console.log(department);
-                    
+                    console.log(res);
+
+                    const salary = res.data;
                     this.setState({
-                        department: department.department,
+                        salary: salary.salary,
                     })
                 }
             })
             .catch(error => console.log(error)
             );
     };
-
     handleInputChange = (event) => {
         const target = event.target;
         const value = target.value;
@@ -36,82 +34,89 @@ class department extends Component {
         this.setState({
             [name]: value
         });
-        //console.log(this.state.name);
+        console.log(this.state.name);
 
     };
 
-    handleInsertDepartment = (event) => {
+    handleInsertSalary = (event) => {
         //event.preventDefault();
 
-        const newDepartment = {
+        const newSalary = {
             //id_department: '',
-            name: this.state.name,
+            money: this.state.money,
+            id_position: this.state.id_position
+            
         };
         //console.log(this.state.name);
 
-        Axios.post('/api/department/insert', newDepartment)
+        Axios.post('/api/salary/insert', newSalary)
             .then(res => {
-                let department = this.state.department;
-                department = [newDepartment, ...department];
-                this.setState({ department: department });
+                let salary = this.state.salary;
+                salary = [newSalary, ...salary];
+                this.setState({ salary: salary });
             })
             .catch(error => console.log(error));
     };
 
-    getDataDepartment = (item) => {
+    getDataSalary = (item) => {
         console.log(item);
-        
+
         this.setState({
-            id_department: item.id_department,
-            name: item.name
+            id_salary: item.id_salary,
+            money: item.money,
+            id_position: item.id_position
         })
     }
 
-    handleEditDepartment = (event) => {
+    handleEditSalary = (event) => {
         event.preventDefault();
 
-        const newEditDepartment = {
-            id_department: this.state.id_department,
-            name: this.state.name,
+        const newEditPosition = {
+            id_salary: this.state.id_salary,
+            money: this.state.money,
+            id_position: this.state.id_position
         };
-        console.log(newEditDepartment);
-        
-        Axios.post('/api/department/edit', newEditDepartment)
+        console.log(newEditPosition);
+
+        Axios.post('/api/salary/edit', newEditPosition)
             .then(res => {
                 console.log(res);
-                
-                let key = this.state.id_department;
+                let key = this.state.id_salary;
                 this.setState(prevState => ({
-                    department: prevState.department.map(
-                        elm => elm.id_department === key ? {
+                    salary: prevState.salary.map(
+                        elm => elm.id_salary === key ? {
                             ...elm,
-                            name: this.state.name
+                            money: this.state.money,
+                            id_position: this.state.id_position
                         } : elm
                     )
                 }))
+                swal("Yeahh! You have successfully edited!", {
+                    icon: "success",
+                });
                 //console.log(this.state.name);
             })
             .catch(error => console.log(error));
     };
 
-    deleteDepartment = (item) => {
+    deleteSalary = (item) => {
         console.log(item);
-        
-        const departmentId = { id_department: item.id_department };
-        //console.log(departmentId);
-        
+
+        const salaryId = { id_salary: item.id_salary };
+        //console.log(salaryId);
+
         //console.log(newsId);
-        Axios.post('api/department/delete', departmentId)
-        
+        Axios.post('api/salary/delete', salaryId)
+
             .then(res => {
                 this.setState(
                     prevState => ({
-                        department: prevState.department.filter(elm => elm.id_department !== item.id_department)
+                        salary: prevState.salary.filter(elm => elm.id_salary !== item.id_salary)
                     })
                 );
                 swal("Yeahh! You have successfully deleted!", {
                     icon: "success",
-                  });
+                });
             })
             .catch(error => console.log(error));
     }
@@ -129,16 +134,21 @@ class department extends Component {
                                     <div className="modal-dialog modal-md modal-dialog-centered">
                                         <div className="modal-content">
                                             <div className="card">
-                                                <div className="card-header text-uppercase">Create Department</div>
+                                                <div className="card-header text-uppercase">Create Position</div>
 
                                                 <div className="card-body">
-                                                    <form onSubmit={this.handleInsertDepartment}>
+                                                    <form onSubmit={this.handleInsertSalary}>
                                                         <div className="row">
                                                             <div className="col-12 col-lg-12 col-xl-12">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Name of Department</label>
+                                                                    <label className="col-sm-12 col-form-label">Name of Position</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="name" className="form-control" 
+                                                                        <input type="cash" name="money" className="form-control"
+                                                                            onChange={this.handleInputChange} />
+                                                                    </div>
+                                                                    <label className="col-sm-12 col-form-label">Position in Department</label>
+                                                                    <div className="col-sm-10">
+                                                                        <input type="text" name="id_position" className="form-control"
                                                                             onChange={this.handleInputChange} />
                                                                     </div>
                                                                 </div>
@@ -162,22 +172,24 @@ class department extends Component {
                                                 <thead>
                                                     <tr>
                                                         <th scope="col">No.</th>
-                                                        <th scope="col">Name Department</th>
+                                                        <th scope="col">Position</th>
+                                                        <th scope="col">Salary</th>
                                                         <th scope="col">Function</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {this.state.department.map((item, key) =>
+                                                    {this.state.salary.map((item, key) =>
                                                         <tr key={key}>
                                                             <th>{key + 1}</th>
-                                                            <th>{item.name}</th>
+                                                            <th>{item.id_position }</th>
+                                                            <th>{item.money+ ' $'}</th>
                                                             <th>
                                                                 <button type="button" className="btn btn-light waves-effect waves-light m-1"
-                                                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataDepartment(item)}> <i className="fa fa-edit" /></button>
-                                                                
+                                                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataSalary(item)}> <i className="fa fa-edit" /></button>
+
                                                                 <button type="button" className="btn btn-light waves-effect waves-light m-1"
-                                                                    data-toggle="modal" data-target={"#modal-animation-"+ item.id_department} > <i className="fa fa-times" /></button>
-                                                                <div className="modal fade" id={"modal-animation-"+ item.id_department} style={{ display: 'none' }} aria-hidden="true">
+                                                                    data-toggle="modal" data-target={"#modal-animation-" + item.id_salary} > <i className="fa fa-times" /></button>
+                                                                <div className="modal fade" id={"modal-animation-" + item.id_salary} style={{ display: 'none' }} aria-hidden="true">
                                                                     <div className="modal-dialog modal-dialog-centered">
                                                                         <div className="modal-content animated bounceIn">
                                                                             <div className="modal-header">
@@ -191,7 +203,7 @@ class department extends Component {
                                                                             </div>
                                                                             <div className="modal-footer">
                                                                                 <button type="button" className="btn btn-light" data-dismiss="modal"><i className="fa fa-times" /> No</button>
-                                                                                <button type="button" className="btn btn-white" data-dismiss="modal" onClick={() => this.deleteDepartment(item)}><i className="fa fa-square" /> Yes</button>
+                                                                                <button type="button" className="btn btn-white" data-dismiss="modal" onClick={() => this.deleteSalary(item)}><i className="fa fa-square" /> Yes</button>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -199,7 +211,7 @@ class department extends Component {
                                                             </th>
 
 
-                                                            {/* onClick={() => this.deleteDepartment(item)} */}
+                                                            {/* onClick={() => this.deleteSalary(item)} */}
                                                         </tr>)}
                                                 </tbody>
                                             </table>
@@ -211,24 +223,29 @@ class department extends Component {
                                     <div className="modal-dialog modal-md modal-dialog-centered">
                                         <div className="modal-content">
                                             <div className="card">
-                                                <div className="card-header text-uppercase">Edit Department</div>
+                                                <div className="card-header text-uppercase">Edit Salary</div>
 
                                                 <div className="card-body">
                                                     <form>
                                                         <div className="row">
                                                             <div className="col-12 col-lg-12 col-xl-12">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Edit Name of Department</label>
+                                                                    <label className="col-sm-12 col-form-label">Edit Salary for Position</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="name" className="form-control" placeholder={this.state.name}
-                                                                            onChange={this.handleInputChange} value={this.state.name} />
+                                                                        <input type="text" name="money" className="form-control" 
+                                                                            onChange={this.handleInputChange} value={this.state.money} />
+                                                                    </div>
+                                                                    <label className="col-sm-12 col-form-label">Edit Position</label>
+                                                                    <div className="col-sm-10">
+                                                                        <input type="text" name="id_position" className="form-control" 
+                                                                            onChange={this.handleInputChange} value={this.state.id_position} />
                                                                     </div>
                                                                 </div>
                                                             </div>
 
 
                                                         </div>{/*end row*/}
-                                                        <button type="submit" className="btn btn-light px-5" onClick={this.handleEditDepartment}><i className="icon-lock" />Edit</button>
+                                                        <button type="submit" className="btn btn-light px-5" onClick={this.handleEditSalary}><i className="icon-lock" />Edit</button>
 
                                                     </form>
                                                 </div>
@@ -237,8 +254,6 @@ class department extends Component {
                                         </div>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
@@ -248,4 +263,4 @@ class department extends Component {
     }
 }
 
-export default department;
+export default salary;

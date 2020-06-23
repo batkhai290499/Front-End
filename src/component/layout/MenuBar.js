@@ -24,22 +24,25 @@ class MenuBar extends Component {
                                 <i className="zmdi zmdi-invert-colors" /> <span>Department</span>
                             </NavLink>
                         </li>
-                        {/* <li>
-                            <a href="forms.html">
-                                <i className="zmdi zmdi-format-list-bulleted" /> <span>Forms</span>
-                            </a>
-                        </li>
                         <li>
-                            <a href="tables.html">
-                                <i className="zmdi zmdi-grid" /> <span>Tables</span>
-                            </a>
+                            <NavLink to="/position">
+                                <i className="zmdi zmdi-format-list-bulleted" /> <span>Position</span>
+                            </NavLink>
                         </li>
+
                         <li>
-                            <a href="calendar.html">
-                                <i className="zmdi zmdi-calendar-check" /> <span>Calendar</span>
-                                <small className="badge float-right badge-light">New</small>
+                            <NavLink to="/salary">
+                                <i className="zmdi zmdi-grid" /> <span>Salary</span>
+                            </NavLink>
+                        </li>
+                        
+                        <li>
+                            <a href="/shift">
+                                <i className="zmdi zmdi-calendar-check" /> <span>Shift</span>
+                                {/* <small className="badge float-right badge-light">New</small> */}
                             </a>
                         </li>
+                        {/*
                         <li>
                             <a href="profile.html">
                                 <i className="zmdi zmdi-face" /> <span>Profile</span>

@@ -98,9 +98,9 @@ class login extends Component {
                         <div className="card-title text-uppercase text-center py-3">Sign In</div>
                         <form>
                             <div className="form-group">
-                                <label htmlFor="exampleInputUsername" className="sr-only">Username</label>
+                                <label htmlFor="exampleInputUsername1" className="sr-only">Username</label>
                                 <div className="position-relative has-icon-right">
-                                    <input type="text" id="exampleInputUsername" name="username" className="form-control input-shadow" placeholder="Enter Username"
+                                    <input type="text" id="exampleInputUsername1" name="username" className="form-control input-shadow" placeholder="Enter Username"
                                         onChange={(e) => {
                                             this.username = e.target.value;
                                         }} />
@@ -124,7 +124,7 @@ class login extends Component {
                             <div className="form-row">
                                 <div className="form-group col-6">
                                     <div className="icheck-material-white">
-                                        <input type="checkbox" id="user-checkbox" defaultChecked />
+                                        <input type="checkbox" id="user-checkbox"  />
                                         <label htmlFor="user-checkbox">Remember me</label>
                                     </div>
                                 </div>
