@@ -65,22 +65,26 @@ class shift extends Component {
 
         this.setState({
             id_shift: item.id_shift,
+            name: item.name,
             time_in: item.time_in,
             time_out: item.time_out
         })
+        console.log(this.state.id_shift);
+        
     }
 
     handleEditShift = (event) => {
         event.preventDefault();
 
         const newEditShift = {
+            id_shift: this.state.id_shift,
             name: this.state.name,
             time_in: this.state.time_in,
             time_out: this.state.time_out
         };
         console.log(newEditShift);
 
-        Axios.post('/api/salary/edit', newEditShift)
+        Axios.post('/api/shift/edit', newEditShift)
             .then(res => {
                 console.log(res);
                 let key = this.state.id_shift;
@@ -109,12 +113,12 @@ class shift extends Component {
         //console.log(shiftId);
 
         //console.log(newsId);
-        Axios.post('api/salary/delete', shiftId)
+        Axios.post('api/shift/delete', shiftId)
 
             .then(res => {
                 this.setState(
                     prevState => ({
-                        salary: prevState.salary.filter(elm => elm.id_shift !== item.id_shift)
+                        shift: prevState.shift.filter(elm => elm.id_shift !== item.id_shift)
                     })
                 );
                 swal("Yeahh! You have successfully deleted!", {
@@ -151,12 +155,12 @@ class shift extends Component {
                                                                     </div>
                                                                     <label className="col-sm-12 col-form-label">Time in</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="time_in" className="form-control"
+                                                                        <input type="time" name="time_in" className="form-control"
                                                                             onChange={this.handleInputChange} />
                                                                     </div>
                                                                     <label className="col-sm-12 col-form-label">Time out</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="time_out" className="form-control"
+                                                                        <input type="time" name="time_out" className="form-control"
                                                                             onChange={this.handleInputChange} />
                                                                     </div>
                                                                 </div>
@@ -198,8 +202,8 @@ class shift extends Component {
                                                                     data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataShift(item)}> <i className="fa fa-edit" /></button>
 
                                                                 <button type="button" className="btn btn-light waves-effect waves-light m-1"
-                                                                    data-toggle="modal" data-target={"#modal-animation-" + item.id_salary} > <i className="fa fa-times" /></button>
-                                                                <div className="modal fade" id={"modal-animation-" + item.id_salary} style={{ display: 'none' }} aria-hidden="true">
+                                                                    data-toggle="modal" data-target={"#modal-animation-" + item.id_shift} > <i className="fa fa-times" /></button>
+                                                                <div className="modal fade" id={"modal-animation-" + item.id_shift} style={{ display: 'none' }} aria-hidden="true">
                                                                     <div className="modal-dialog modal-dialog-centered">
                                                                         <div className="modal-content animated bounceIn">
                                                                             <div className="modal-header">
@@ -233,22 +237,27 @@ class shift extends Component {
                                     <div className="modal-dialog modal-md modal-dialog-centered">
                                         <div className="modal-content">
                                             <div className="card">
-                                                <div className="card-header text-uppercase">Edit Salary</div>
+                                                <div className="card-header text-uppercase">Edit Shift</div>
 
                                                 <div className="card-body">
                                                     <form>
                                                         <div className="row">
                                                             <div className="col-12 col-lg-12 col-xl-12">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Edit Salary for Position</label>
+                                                                    <label className="col-sm-12 col-form-label">Edit Name for Shift</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="money" className="form-control" 
-                                                                            onChange={this.handleInputChange} value={this.state.money} />
+                                                                        <input type="text" name="name" className="form-control" 
+                                                                            onChange={this.handleInputChange} value={this.state.name} />
                                                                     </div>
-                                                                    <label className="col-sm-12 col-form-label">Edit Position</label>
+                                                                    <label className="col-sm-12 col-form-label">Edit Time In</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="id_position" className="form-control" 
-                                                                            onChange={this.handleInputChange} value={this.state.id_position} />
+                                                                        <input type="time" name="time_in" className="form-control" 
+                                                                            onChange={this.handleInputChange} value={this.state.time_in} />
+                                                                    </div>
+                                                                    <label className="col-sm-12 col-form-label">Edit Time Out</label>
+                                                                    <div className="col-sm-10">
+                                                                        <input type="time" name="time_out" className="form-control" 
+                                                                            onChange={this.handleInputChange} value={this.state.time_out} />
                                                                     </div>
                                                                 </div>
                                                             </div>
