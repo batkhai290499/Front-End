@@ -35,12 +35,12 @@ class MenuBar extends Component {
                                 <i className="zmdi zmdi-grid" /> <span>Salary</span>
                             </NavLink>
                         </li>
-                        
+
                         <li>
-                            <a href="/shift">
-                                <i className="zmdi zmdi-calendar-check" /> <span>Shift</span>
+                            <NavLink to="/shift">
+                                <i className="zmdi zmdi-calendar" /> <span>Shift</span>
                                 {/* <small className="badge float-right badge-light">New</small> */}
-                            </a>
+                            </NavLink>
                         </li>
                         {/*
                         <li>

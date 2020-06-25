@@ -128,25 +128,25 @@ class salary extends Component {
                         <div className="row ">
                             <div className="col-lg-2">
                                 {/* Large Size Modal */}
-                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">Create Department</button>
+                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">Create Salary</button>
                                 {/* Modal */}
                                 <div className="modal fade" id="formemodal" style={{ display: 'none' }} aria-hidden="true">
                                     <div className="modal-dialog modal-md modal-dialog-centered">
                                         <div className="modal-content">
                                             <div className="card">
-                                                <div className="card-header text-uppercase">Create Position</div>
+                                                <div className="card-header text-uppercase">Create Salary</div>
 
                                                 <div className="card-body">
                                                     <form onSubmit={this.handleInsertSalary}>
                                                         <div className="row">
                                                             <div className="col-12 col-lg-12 col-xl-12">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Name of Position</label>
+                                                                    <label className="col-sm-12 col-form-label">Money</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="cash" name="money" className="form-control"
                                                                             onChange={this.handleInputChange} />
                                                                     </div>
-                                                                    <label className="col-sm-12 col-form-label">Position in Department</label>
+                                                                    <label className="col-sm-12 col-form-label">Position</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="text" name="id_position" className="form-control"
                                                                             onChange={this.handleInputChange} />
@@ -166,7 +166,7 @@ class salary extends Component {
                             <div className="col-lg-12">
                                 <div className="card">
                                     <div className="card-body">
-                                        <h5 className="card-title">List Department</h5>
+                                        <h5 className="card-title">List Salary of Employee</h5>
                                         <div className="table-responsive">
                                             <table className="table">
                                                 <thead>
@@ -181,7 +181,7 @@ class salary extends Component {
                                                     {this.state.salary.map((item, key) =>
                                                         <tr key={key}>
                                                             <th>{key + 1}</th>
-                                                            <th>{item.id_position }</th>
+                                                            <th>{item.position_name }</th>
                                                             <th>{item.money+ ' $'}</th>
                                                             <th>
                                                                 <button type="button" className="btn btn-light waves-effect waves-light m-1"

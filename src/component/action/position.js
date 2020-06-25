@@ -62,7 +62,7 @@ class position extends Component {
 
         this.setState({
             id_department: item.id_department,
-            name: item.name,
+            name: item.position_name,
             id_position: item.id_position
         })
     }
@@ -127,7 +127,7 @@ class position extends Component {
                         <div className="row ">
                             <div className="col-lg-2">
                                 {/* Large Size Modal */}
-                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">Create Department</button>
+                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">Create Position</button>
                                 {/* Modal */}
                                 <div className="modal fade" id="formemodal" style={{ display: 'none' }} aria-hidden="true">
                                     <div className="modal-dialog modal-md modal-dialog-centered">
@@ -165,7 +165,7 @@ class position extends Component {
                             <div className="col-lg-12">
                                 <div className="card">
                                     <div className="card-body">
-                                        <h5 className="card-title">List Department</h5>
+                                        <h5 className="card-title">List Position</h5>
                                         <div className="table-responsive">
                                             <table className="table">
                                                 <thead>
@@ -180,8 +180,8 @@ class position extends Component {
                                                     {this.state.position.map((item, key) =>
                                                         <tr key={key}>
                                                             <th>{key + 1}</th>
-                                                            <th>{item.name}</th>
-                                                            <th>{item.id_department}</th>
+                                                            <th>{item.position_name}</th>
+                                                            <th>{item.department_name}</th>
                                                             <th>
                                                                 <button type="button" className="btn btn-light waves-effect waves-light m-1"
                                                                     data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataPosition(item)}> <i className="fa fa-edit" /></button>

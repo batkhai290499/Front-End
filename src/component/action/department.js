@@ -63,7 +63,7 @@ class department extends Component {
         
         this.setState({
             id_department: item.id_department,
-            name: item.name
+            name: item.department_name
         })
     }
 
@@ -85,7 +85,7 @@ class department extends Component {
                     department: prevState.department.map(
                         elm => elm.id_department === key ? {
                             ...elm,
-                            name: this.state.name
+                            department_name: this.state.name
                         } : elm
                     )
                 }))
@@ -170,7 +170,7 @@ class department extends Component {
                                                     {this.state.department.map((item, key) =>
                                                         <tr key={key}>
                                                             <th>{key + 1}</th>
-                                                            <th>{item.name}</th>
+                                                            <th>{item.department_name}</th>
                                                             <th>
                                                                 <button type="button" className="btn btn-light waves-effect waves-light m-1"
                                                                     data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataDepartment(item)}> <i className="fa fa-edit" /></button>

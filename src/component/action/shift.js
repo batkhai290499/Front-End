@@ -9,7 +9,7 @@ class shift extends Component {
         this.state = {
             shift: [],
             id_shift: '',
-            name:'',
+            name: '',
             time_in: '',
             time_out: ''
         }
@@ -65,12 +65,12 @@ class shift extends Component {
 
         this.setState({
             id_shift: item.id_shift,
-            name: item.name,
+            name: item.shift_name,
             time_in: item.time_in,
             time_out: item.time_out
         })
         console.log(this.state.id_shift);
-        
+
     }
 
     handleEditShift = (event) => {
@@ -194,7 +194,7 @@ class shift extends Component {
                                                     {this.state.shift.map((item, key) =>
                                                         <tr key={key}>
                                                             <th>{key + 1}</th>
-                                                            <th>{item.name }</th>
+                                                            <th>{item.shift_name}</th>
                                                             <th>{moment(item.time_in, 'HH:mm').format("HH:mm")}</th>
                                                             <th>{moment(item.time_out, 'HH:mm').format("HH:mm")}</th>
                                                             <th>
@@ -246,17 +246,17 @@ class shift extends Component {
                                                                 <div className="form-group row">
                                                                     <label className="col-sm-12 col-form-label">Edit Name for Shift</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="name" className="form-control" 
+                                                                        <input type="text" name="name" className="form-control"
                                                                             onChange={this.handleInputChange} value={this.state.name} />
                                                                     </div>
                                                                     <label className="col-sm-12 col-form-label">Edit Time In</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="time" name="time_in" className="form-control" 
+                                                                        <input type="time" name="time_in" className="form-control"
                                                                             onChange={this.handleInputChange} value={this.state.time_in} />
                                                                     </div>
                                                                     <label className="col-sm-12 col-form-label">Edit Time Out</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="time" name="time_out" className="form-control" 
+                                                                        <input type="time" name="time_out" className="form-control"
                                                                             onChange={this.handleInputChange} value={this.state.time_out} />
                                                                     </div>
                                                                 </div>

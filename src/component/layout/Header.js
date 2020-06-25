@@ -70,7 +70,7 @@ export default class Header extends Component {
                                 <li className="dropdown-divider" />
                                 <li className="dropdown-item"><i className="icon-settings mr-2" /> Setting</li>
                                 <li className="dropdown-divider" />
-                                <li className="dropdown-item"><i className="icon-power mr-2" /> <a onClick={() => this.logout()}>Logout</a> </li>
+                                <li className="dropdown-item"><i className="icon-power mr-2" /> <button onClick={() => this.logout()}>Logout</button> </li>
                             </ul>
                         </li>
                     </ul>
