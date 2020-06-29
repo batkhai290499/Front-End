@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
 import swal from 'sweetalert';
+import Select from 'react-select';
 
 class position extends Component {
     constructor(props) {
@@ -9,7 +10,9 @@ class position extends Component {
             position: [],
             id_position: '',
             name: '',
-            id_department: ''
+            id_department: '',
+            selectedDepartment: null,
+
         }
     }
     componentDidMount() {
@@ -26,7 +29,32 @@ class position extends Component {
             })
             .catch(error => console.log(error)
             );
+        this.getAllDepartment()
     };
+    getAllDepartment = () => {
+        Axios.get('/api/department/getAll')
+            .then(res => {
+                if (res.status === 200) {
+
+                    const department = res.data;
+                    //console.log(department);
+
+                    var dataDepartmentOption;
+                    var departmentOption = [];
+                    department.department.forEach(e => {
+                        dataDepartmentOption = { value: e.id_department, label: e.department_name };
+                        departmentOption.push(dataDepartmentOption);
+                    });
+                    this.setState({
+                        department: department.department,
+                        listDepartment: departmentOption
+                    });
+                    console.log(this.state.listDepartment);
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
     handleInputChange = (event) => {
         const target = event.target;
         const value = target.value;
@@ -44,9 +72,9 @@ class position extends Component {
         const newPosition = {
             //id_department: '',
             name: this.state.name,
-            id_department: this.state.id_department
+            id_department: this.state.selectedDepartment.value
         };
-        //console.log(this.state.name);
+        console.log(this.state.id_department);
 
         Axios.post('/api/position/insert', newPosition)
             .then(res => {
@@ -57,6 +85,10 @@ class position extends Component {
             .catch(error => console.log(error));
     };
 
+
+    handleChangeDepartment = (selectedDepartment) => {
+        this.setState({ selectedDepartment });
+    }
     getDataPosition = (item) => {
         console.log(item);
 
@@ -71,7 +103,7 @@ class position extends Component {
         event.preventDefault();
 
         const newEditPosition = {
-            id_department: this.state.id_department,
+            id_department: this.state.selectedDepartment.value,
             name: this.state.name,
             id_position: this.state.id_position
         };
@@ -93,11 +125,15 @@ class position extends Component {
                 swal("Yeahh! You have successfully edited!", {
                     icon: "success",
                 });
+                this.modalClose()
                 //console.log(this.state.name);
             })
             .catch(error => console.log(error));
     };
 
+    modalClose = () => {
+        this.componentDidMount();
+    }
     deletePosition = (item) => {
         console.log(item);
 
@@ -105,7 +141,7 @@ class position extends Component {
         //console.log(positionId);
 
         //console.log(newsId);
-        Axios.post('api/position/delete', positionId)
+        Axios.post('/api/position/delete', positionId)
 
             .then(res => {
                 this.setState(
@@ -120,6 +156,7 @@ class position extends Component {
             .catch(error => console.log(error));
     }
     render() {
+        const { selectedDepartment } = this.state;
         return (
             <div>
                 <div className="content-wrapper">
@@ -147,8 +184,13 @@ class position extends Component {
                                                                     </div>
                                                                     <label className="col-sm-12 col-form-label">Position in Department</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="id_department" className="form-control"
-                                                                            onChange={this.handleInputChange} />
+                                                                        {/* <input type="text" name="id_department" className="form-control"
+                                                                            onChange={this.handleInputChange} /> */}
+                                                                        <Select
+                                                                            value={selectedDepartment}
+                                                                            onChange={this.handleChangeDepartment}
+                                                                            options={this.state.listDepartment}
+                                                                        />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -208,8 +250,6 @@ class position extends Component {
                                                                     </div>
                                                                 </div>
                                                             </th>
-
-
                                                             {/* onClick={() => this.deletePosition(item)} */}
                                                         </tr>)}
                                                 </tbody>
@@ -231,13 +271,18 @@ class position extends Component {
                                                                 <div className="form-group row">
                                                                     <label className="col-sm-12 col-form-label">Edit Name of Position</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="name" className="form-control" 
+                                                                        <input type="text" name="name" className="form-control"
                                                                             onChange={this.handleInputChange} value={this.state.name} />
                                                                     </div>
                                                                     <label className="col-sm-12 col-form-label">Edit Name of Department</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="id_department" className="form-control" 
-                                                                            onChange={this.handleInputChange} value={this.state.id_department} />
+                                                                        {/* <input type="text" name="id_department" className="form-control"
+                                                                            onChange={this.handleInputChange} value={this.state.id_department} /> */}
+                                                                        <Select
+                                                                            value={selectedDepartment}
+                                                                            onChange={this.handleChangeDepartment}
+                                                                            options={this.state.listDepartment}
+                                                                        />
                                                                     </div>
                                                                 </div>
                                                             </div>

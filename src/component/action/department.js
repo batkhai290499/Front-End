@@ -96,10 +96,8 @@ class department extends Component {
 
     deleteDepartment = (item) => {
         console.log(item);
-        
         const departmentId = { id_department: item.id_department };
         //console.log(departmentId);
-        
         //console.log(newsId);
         Axios.post('api/department/delete', departmentId)
         

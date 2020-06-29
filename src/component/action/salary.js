@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Axios from 'axios';
 import swal from 'sweetalert';
+import Select from 'react-select';
 
 class salary extends Component {
     constructor(props) {
@@ -9,7 +10,9 @@ class salary extends Component {
             salary: [],
             id_position: '',
             money: '',
-            id_salary: ''
+            id_salary: '',
+            selectedPosition: null,
+
         }
     }
     componentDidMount() {
@@ -26,6 +29,7 @@ class salary extends Component {
             })
             .catch(error => console.log(error)
             );
+        this.getAllPosition()
     };
     handleInputChange = (event) => {
         const target = event.target;
@@ -37,15 +41,40 @@ class salary extends Component {
         console.log(this.state.name);
 
     };
+    getAllPosition = () => {
+        Axios.get('/api/position/getAll')
+            .then(res => {
+                if (res.status === 200) {
+                    const position = res.data;
+                    var dataPositionOption;
+                    var positionOption = [];
 
+                    position.position.forEach(e => {
+                        dataPositionOption = { value: e.id_position, label: e.position_name }
+                        positionOption.push(dataPositionOption)
+                    })
+                    this.setState({
+                        position: position.position,
+                        listPosition: positionOption
+                    });
+                    console.log(this.state.listPosition);
+
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+    handleChangePosition = (selectedPosition) => {
+        this.setState({ selectedPosition });
+    }
     handleInsertSalary = (event) => {
         //event.preventDefault();
 
         const newSalary = {
             //id_department: '',
             money: this.state.money,
-            id_position: this.state.id_position
-            
+            id_position: this.state.selectedPosition.value
+
         };
         //console.log(this.state.name);
 
@@ -74,7 +103,7 @@ class salary extends Component {
         const newEditPosition = {
             id_salary: this.state.id_salary,
             money: this.state.money,
-            id_position: this.state.id_position
+            id_position: this.state.selectedPosition.value
         };
         console.log(newEditPosition);
 
@@ -94,11 +123,14 @@ class salary extends Component {
                 swal("Yeahh! You have successfully edited!", {
                     icon: "success",
                 });
+                this.modalClose()
                 //console.log(this.state.name);
             })
             .catch(error => console.log(error));
     };
-
+    modalClose = () => {
+        this.componentDidMount();
+    }
     deleteSalary = (item) => {
         console.log(item);
 
@@ -121,6 +153,8 @@ class salary extends Component {
             .catch(error => console.log(error));
     }
     render() {
+        const { selectedPosition } = this.state;
+        
         return (
             <div>
                 <div className="content-wrapper">
@@ -148,8 +182,13 @@ class salary extends Component {
                                                                     </div>
                                                                     <label className="col-sm-12 col-form-label">Position</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="id_position" className="form-control"
-                                                                            onChange={this.handleInputChange} />
+                                                                        {/* <input type="text" name="id_position" className="form-control"
+                                                                            onChange={this.handleInputChange} /> */}
+                                                                        <Select
+                                                                            value={selectedPosition}
+                                                                            onChange={this.handleChangePosition}
+                                                                            options={this.state.listPosition}
+                                                                        />
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -181,8 +220,8 @@ class salary extends Component {
                                                     {this.state.salary.map((item, key) =>
                                                         <tr key={key}>
                                                             <th>{key + 1}</th>
-                                                            <th>{item.position_name }</th>
-                                                            <th>{item.money+ ' $'}</th>
+                                                            <th>{item.position_name}</th>
+                                                            <th>{item.money + ' $'}</th>
                                                             <th>
                                                                 <button type="button" className="btn btn-light waves-effect waves-light m-1"
                                                                     data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataSalary(item)}> <i className="fa fa-edit" /></button>
@@ -232,13 +271,18 @@ class salary extends Component {
                                                                 <div className="form-group row">
                                                                     <label className="col-sm-12 col-form-label">Edit Salary for Position</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="money" className="form-control" 
+                                                                        <input type="text" name="money" className="form-control"
                                                                             onChange={this.handleInputChange} value={this.state.money} />
                                                                     </div>
                                                                     <label className="col-sm-12 col-form-label">Edit Position</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="id_position" className="form-control" 
-                                                                            onChange={this.handleInputChange} value={this.state.id_position} />
+                                                                        {/* <input type="text" name="id_position" className="form-control"
+                                                                            onChange={this.handleInputChange} value={this.state.position_name} /> */}
+                                                                        <Select
+                                                                            value={selectedPosition}
+                                                                            onChange={this.handleChangePosition}
+                                                                            options={this.state.listPosition}
+                                                                        />
                                                                     </div>
                                                                 </div>
                                                             </div>
