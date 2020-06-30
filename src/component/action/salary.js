@@ -93,7 +93,8 @@ class salary extends Component {
         this.setState({
             id_salary: item.id_salary,
             money: item.money,
-            id_position: item.id_position
+            id_position: item.id_position,
+            position_name: item.position_name
         })
     }
 
@@ -282,6 +283,7 @@ class salary extends Component {
                                                                             value={selectedPosition}
                                                                             onChange={this.handleChangePosition}
                                                                             options={this.state.listPosition}
+                                                                            placeholder={this.state.position_name}
                                                                         />
                                                                     </div>
                                                                 </div>

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import axios from 'axios'
-import Select from 'react-select';
 
 class Bend extends Component {
     constructor(props) {
@@ -21,11 +20,6 @@ class Bend extends Component {
             id_salary: '',
             id_shift: '',
             id_position: '',
-            selectedDepartment: null,
-            selectedPosition: null,
-            selectedSalary: null,
-            selectedShift: null,
-            selectedRole: null,
         }
     }
 
@@ -34,8 +28,7 @@ class Bend extends Component {
         this.getAllDepartment();
         this.getAllPosition();
         this.getAllSalary();
-        this.getAllShift();
-        this.getAllRole()
+        this.getAllShift()
     };
 
     getUser = () => {
@@ -50,24 +43,11 @@ class Bend extends Component {
             );
     }
     getAllDepartment = () => {
-        axios.get('/api/department/getAll')
+        axios.get('/api/department/views')
             .then(res => {
                 if (res.status === 200) {
-
                     const department = res.data;
-                    //console.log(department);
-
-                    var dataDepartmentOption;
-                    var departmentOption = [];
-                    department.department.forEach(e => {
-                        dataDepartmentOption = { value: e.id_department, label: e.department_name };
-                        departmentOption.push(dataDepartmentOption);
-                    });
-                    this.setState({
-                        department: department.department,
-                        listDepartment: departmentOption
-                    });
-                    //console.log(this.state.listDepartment);
+                    this.setState({ department: department.department });
                 }
             })
             .catch(error => console.log(error)
@@ -78,17 +58,7 @@ class Bend extends Component {
             .then(res => {
                 if (res.status === 200) {
                     const position = res.data;
-                    var dataPositionOption;
-                    var positionOption = [];
-
-                    position.position.forEach(e => {
-                        dataPositionOption = { value: e.id_position, label: e.position_name }
-                        positionOption.push(dataPositionOption)
-                    })
-                    this.setState({
-                        position: position.position,
-                        listPosition: positionOption
-                    });
+                    this.setState({ position: position.position });
                 }
             })
             .catch(error => console.log(error)
@@ -99,17 +69,7 @@ class Bend extends Component {
             .then(res => {
                 if (res.status === 200) {
                     const salary = res.data;
-                    var dataSalaryOption;
-                    var salaryOption = [];
-                    salary.salary.forEach(e => {
-                        dataSalaryOption = { value: e.id_salary, label: e.money + '$' }
-                        salaryOption.push(dataSalaryOption)
-                    })
-
-                    this.setState({
-                        salary: salary.salary,
-                        listSalary: salaryOption
-                    });
+                    this.setState({ salary: salary.salary });
                 }
             })
             .catch(error => console.log(error)
@@ -120,62 +80,13 @@ class Bend extends Component {
             .then(res => {
                 if (res.status === 200) {
                     const shift = res.data;
-                    var dataShiftOption;
-                    var shiftOption = [];
-                    shift.shift.forEach(e => {
-                        dataShiftOption = { value: e.id_shift, label: e.shift_name }
-                        shiftOption.push(dataShiftOption)
-                    })
-                    this.setState({
-                        shift: shift.shift,
-                        listShift: shiftOption
-                    });
+                    this.setState({ shift: shift.shift });
                 }
             })
             .catch(error => console.log(error)
             );
     }
 
-    getAllRole = () => {
-        axios.get('/api/role/getAll')
-            .then(res => {
-                if (res.status === 200) {
-                    const role = res.data;
-                    var dataRoleOption;
-                    var roleOption = [];
-                    role.role.forEach(e => {
-                        dataRoleOption = { value: e.id_role, label: e.role_name }
-                        roleOption.push(dataRoleOption)
-                    })
-                    this.setState({
-                        role: role.role,
-                        listRole: roleOption
-                    });
-                }
-            })
-            .catch(error => console.log(error)
-            );
-    }
-
-    handleChangeDepartment = (selectedDepartment) => {
-        this.setState({ selectedDepartment });
-    }
-
-    handleChangePosition = (selectedPosition) => {
-        this.setState({ selectedPosition });
-    }
-
-    handleChangeSalary = (selectedSalary) => {
-        this.setState({ selectedSalary });
-    }
-
-    handleChangeShift = (selectedShift) => {
-        this.setState({ selectedShift });
-    }
-
-    handleChangeRole = (selectedRole) => {
-        this.setState({ selectedRole });
-    }
     handleInputChange = (event) => {
         const target = event.target;
         const value = target.value;
@@ -183,7 +94,7 @@ class Bend extends Component {
         this.setState({
             [name]: value
         });
-        console.log(value);
+        console.log(event);
 
     };
 
@@ -195,11 +106,10 @@ class Bend extends Component {
             age: this.state.age,
             address: this.state.address,
             phone: this.state.phone,
-            id_department: this.state.selectedDepartment.value,
-            id_position: this.state.selectedPosition.value,
-            id_salary: this.state.selectedSalary.value,
-            id_shift: this.state.selectedShift.value,
-            id_role: this.state.selectedRole.value,
+            id_department: this.state.id_department,
+            id_position: this.state.id_position,
+            id_salary: this.state.id_salary,
+            id_shift: this.state.id_shift,
         };
 
         axios.post('/api/user/insert', newUser)
@@ -211,12 +121,6 @@ class Bend extends Component {
             .catch(error => console.log(error));
     }
     render() {
-        const { selectedDepartment } = this.state;
-        const { selectedPosition } = this.state;
-        const { selectedSalary } = this.state;
-        const { selectedShift } = this.state;
-        const { selectedRole } = this.state;
-
         return (
             <div>
                 <div className="content-wrapper">
@@ -285,50 +189,53 @@ class Bend extends Component {
                                                                 </div>
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Department</label>
-                                                                <Select
-                                                                    value={selectedDepartment}
-                                                                    onChange={this.handleChangeDepartment}
-                                                                    options={this.state.listDepartment}
-                                                                />
+                                                                <div className="form-group row">
+                                                                    <label className="col-sm-3 col-form-label">Department</label>
+                                                                    <select className="form-control single-select select2-hidden-accessiblecol-sm-10" aria-hidden="true"
+                                                                        name="id_department" onChange={this.handleInputChange}>
+                                                                        {this.state.department.map((item, key) =>
+                                                                            <option value={item.id_department} key={key}>{item.department_name}</option>
+                                                                        )}
+                                                                    </select>
+                                                                </div>
+
+
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Position</label>
-                                                                <Select
-                                                                    value={selectedPosition}
-                                                                    onChange={this.handleChangePosition}
-                                                                    options={this.state.listPosition}
-                                                                />
+                                                                <div className="form-group row">
+                                                                    <label className="col-sm-3 col-form-label">Salary</label>
+                                                                    <select className="form-control single-select select2-hidden-accessiblecol-sm-10" aria-hidden="true"
+                                                                        name="id_salary" onChange={() => this.handleInputChange()}>
+                                                                        {this.state.salary.map((item, key) =>
+                                                                            <option value={item.id_salary} key={key}>{item.money + ' $'}</option>
+                                                                        )}
+                                                                    </select>
+                                                                </div>
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Shift</label>
-                                                                <Select
-                                                                    value = {selectedShift}
-                                                                    onChange={this.handleChangeShift}
-                                                                    options={this.state.listShift}
-                                                                />
+                                                                <div className="form-group row">
+                                                                    <label className="col-sm-3 col-form-label">Shift</label>
+                                                                    <select className="form-control single-select select2-hidden-accessiblecol-sm-10" aria-hidden="true"
+                                                                        name="id_shift" onChange={() => this.handleInputChange()}>
+                                                                        {this.state.shift.map((item, key) =>
+                                                                            <option value={item.id_shift} key={key}>{item.shift_name}</option>
+                                                                        )}
+                                                                    </select>
+                                                                </div>
                                                             </div>
 
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Salary</label>
-                                                                <Select
-                                                                    value = {selectedSalary}
-                                                                    onChange={this.handleChangeSalary}
-                                                                    options={this.state.listSalary}
-                                                                />
+                                                                <div className="form-group row">
+                                                                    <label className="col-sm-3 col-form-label">Position</label>
+                                                                    <select className="form-control single-select select2-hidden-accessiblecol-sm-10" aria-hidden="true"
+                                                                        name="id_position" onChange={() => this.handleInputChange()}>
+                                                                        {this.state.position.map((item, key) =>
+                                                                            <option value={item.id_position} key={key}>{item.position_name}</option>
+                                                                        )}
+                                                                    </select>
+                                                                </div>
                                                             </div>
-                                                            <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Role</label>
-                                                                <Select
-                                                                    value = {selectedRole}
-                                                                    onChange={this.handleChangeRole}
-                                                                    options={this.state.listRole}
-                                                                />
-                                                            </div>
-                                                            <div className="col-12 col-lg-6 col-xl-6">
-                                                                <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Submit</button>
-                                                            </div>
-
+                                                            <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Submit</button>
                                                         </div>{/*end row*/}
                                                     </form>
                                                 </div>
@@ -357,7 +264,7 @@ class Bend extends Component {
                                                         <th scope="col">Salary</th>
                                                         <th scope="col">Shift</th>
                                                         <th scope="col">Position</th>
-
+                                                        <th scope="col">Function</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -373,13 +280,40 @@ class Bend extends Component {
                                                             <th>{item.money + ' $'}</th>
                                                             <th>{item.shift_name}</th>
                                                             <th>{item.position_name}</th>
-                                                        </tr>)}
+                                                            <th>
+                                                                <button type="button" className="btn btn-light waves-effect waves-light m-1"
+                                                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataUser(item)}> <i className="fa fa-edit" /></button>
 
+                                                                <button type="button" className="btn btn-light waves-effect waves-light m-1"
+                                                                    data-toggle="modal" data-target={"#modal-animation-" + item.id_account} > <i className="fa fa-times" /></button>
+                                                                <div className="modal fade" id={"modal-animation-" + item.id_account} style={{ display: 'none' }} aria-hidden="true">
+                                                                    <div className="modal-dialog modal-dialog-centered">
+                                                                        <div className="modal-content animated bounceIn">
+                                                                            <div className="modal-header">
+                                                                                <h5 className="modal-title">Alert</h5>
+                                                                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                                                                    <span aria-hidden="true">×</span>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div className="modal-body">
+                                                                                <p>Do you want delete {this.state.name}</p>
+                                                                            </div>
+                                                                            <div className="modal-footer">
+                                                                                <button type="button" className="btn btn-light" data-dismiss="modal"><i className="fa fa-times" /> No</button>
+                                                                                <button type="button" className="btn btn-white" data-dismiss="modal" onClick={() => this.deleteUser(item)}><i className="fa fa-square" /> Yes</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </th>
+                                                        </tr>)}
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
+                                                        
+
                             </div>
                         </div>
 
