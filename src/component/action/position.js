@@ -95,7 +95,8 @@ class position extends Component {
         this.setState({
             id_department: item.id_department,
             name: item.position_name,
-            id_position: item.id_position
+            id_position: item.id_position,
+            department_name: item.department_name
         })
     }
 
@@ -282,6 +283,7 @@ class position extends Component {
                                                                             value={selectedDepartment}
                                                                             onChange={this.handleChangeDepartment}
                                                                             options={this.state.listDepartment}
+                                                                            placeholder={this.state.department_name}
                                                                         />
                                                                     </div>
                                                                 </div>
