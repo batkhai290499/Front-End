@@ -83,7 +83,6 @@ class login extends Component {
                 this.setState({ 'error': 1 });
                 alert("Login Fail <3")
             }
-
         }
     }
     render() {
@@ -100,7 +99,8 @@ class login extends Component {
                             <div className="form-group">
                                 <label htmlFor="exampleInputUsername1" className="sr-only">Username</label>
                                 <div className="position-relative has-icon-right">
-                                    <input type="text" id="exampleInputUsername1" name="username" className="form-control input-shadow" placeholder="Enter Username"
+                                    <input type="text" id="exampleInputUsername1" name="username" className="form-control input-shadow" 
+                                    placeholder="Enter Username"
                                         onChange={(e) => {
                                             this.username = e.target.value;
                                         }} />
@@ -112,7 +112,8 @@ class login extends Component {
                             <div className="form-group">
                                 <label htmlFor="exampleInputPassword" className="sr-only">Password</label>
                                 <div className="position-relative has-icon-right">
-                                    <input type="password" id="exampleInputPassword" name="password" className="form-control input-shadow" placeholder="Enter Password"
+                                    <input type="password" id="exampleInputPassword" name="password" className="form-control input-shadow" 
+                                    placeholder="Enter Password"
                                         onChange={(e) => {
                                             this.password = e.target.value;
                                         }} />

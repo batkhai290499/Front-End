@@ -42,12 +42,13 @@ class MenuBar extends Component {
                                 {/* <small className="badge float-right badge-light">New</small> */}
                             </NavLink>
                         </li>
-                        {/*
+                        
                         <li>
-                            <a href="profile.html">
-                                <i className="zmdi zmdi-face" /> <span>Profile</span>
-                            </a>
+                            <NavLink to="/attendance">
+                                <i className="zmdi zmdi-face" /> <span>Attendance</span>
+                            </NavLink>
                         </li>
+                        {/*
                         <li>
                             <a href="login.html" >
                                 <i className="zmdi zmdi-lock" /> <span>Login</span>
