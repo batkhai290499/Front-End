@@ -328,12 +328,10 @@ class Bend extends Component {
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Submit</button>
                                                             </div>
-
                                                         </div>{/*end row*/}
                                                     </form>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
