@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 class MenuBar extends Component {
     render() {
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+
         return (
             <div>
                 <div id="sidebar-wrapper" data-simplebar data-simplebar-auto-hide="true">
@@ -13,41 +15,51 @@ class MenuBar extends Component {
                     </div>
                     <ul className="sidebar-menu do-nicescrol">
                         <li className="sidebar-header">MAIN NAVIGATION</li>
-                        <li>
-                            <NavLink to="/bend">
-                                <i className="zmdi zmdi-view-dashboard" /> <span>Account</span>
-                            </NavLink>
+                        {
+                            dataUser[0].role == 1
+                                ?
+                                <>
+                                    <li>
+                                        <NavLink to="/bend">
+                                            <i className="zmdi zmdi-view-dashboard" /> <span>Account</span>
+                                        </NavLink>
 
-                        </li>
-                        <li>
-                            <NavLink to="/department">
-                                <i className="zmdi zmdi-invert-colors" /> <span>Department</span>
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/position">
-                                <i className="zmdi zmdi-format-list-bulleted" /> <span>Position</span>
-                            </NavLink>
-                        </li>
+                                    </li>
+                                    <li>
+                                        <NavLink to="/department">
+                                            <i className="zmdi zmdi-invert-colors" /> <span>Department</span>
+                                        </NavLink>
+                                    </li>
+                                    <li>
+                                        <NavLink to="/position">
+                                            <i className="zmdi zmdi-format-list-bulleted" /> <span>Position</span>
+                                        </NavLink>
+                                    </li>
 
-                        <li>
-                            <NavLink to="/salary">
-                                <i className="zmdi zmdi-grid" /> <span>Salary</span>
-                            </NavLink>
-                        </li>
+                                    <li>
+                                        <NavLink to="/salary">
+                                            <i className="zmdi zmdi-grid" /> <span>Salary</span>
+                                        </NavLink>
+                                    </li>
 
-                        <li>
-                            <NavLink to="/shift">
-                                <i className="zmdi zmdi-calendar" /> <span>Shift</span>
-                                {/* <small className="badge float-right badge-light">New</small> */}
-                            </NavLink>
-                        </li>
-                        
-                        <li>
-                            <NavLink to="/attendance">
-                                <i className="zmdi zmdi-face" /> <span>Attendance</span>
-                            </NavLink>
-                        </li>
+                                    <li>
+                                        <NavLink to="/shift">
+                                            <i className="zmdi zmdi-calendar" /> <span>Shift</span>
+                                        </NavLink>
+                                    </li>
+                                </>
+                                : dataUser[0].role == 3
+                                    ?
+                                    <li>
+                                        <NavLink to="/attendance">
+                                            <i className="zmdi zmdi-face" /> <span>Attendance</span>
+                                        </NavLink>
+                                    </li>
+                                    : ""
+                        }
+
+
+
                         {/*
                         <li>
                             <a href="login.html" >

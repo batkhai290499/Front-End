@@ -59,7 +59,7 @@ class login extends Component {
                 password: this.password
             }
         });
-        console.log(results);
+        //console.log(results);
 
         // if ( results.length() !== 0){
         //     localStorage.setItem("isLogin", 'true');
@@ -76,9 +76,21 @@ class login extends Component {
         else {
             if (results.data.news.length > 0) {
                 localStorage.setItem("isLogin", 'true');
-                this.props.history.push('/bend');
-                console.log("<3");
+                
+                var hi = results.data.news
+                var data;
+                var dataUser = [];
+                hi.forEach(e => {
+                    data = { id: e.id_account, name: e.name, username: e.username, role:e.id_role, shift:e.id_shift }
+                    dataUser.push(data)
+                })
+                localStorage.setItem('userInfo', JSON.stringify(dataUser))
+                if (dataUser[0].role == 1) {
+                    window.location.href = '/bend';                    
+                }else if (dataUser[0].role == 3){
+                    window.location.href = '/attendance';                    
 
+                }
             } else {
                 this.setState({ 'error': 1 });
                 alert("Login Fail <3")
@@ -99,8 +111,8 @@ class login extends Component {
                             <div className="form-group">
                                 <label htmlFor="exampleInputUsername1" className="sr-only">Username</label>
                                 <div className="position-relative has-icon-right">
-                                    <input type="text" id="exampleInputUsername1" name="username" className="form-control input-shadow" 
-                                    placeholder="Enter Username"
+                                    <input type="text" id="exampleInputUsername1" name="username" className="form-control input-shadow"
+                                        placeholder="Enter Username"
                                         onChange={(e) => {
                                             this.username = e.target.value;
                                         }} />
@@ -112,8 +124,8 @@ class login extends Component {
                             <div className="form-group">
                                 <label htmlFor="exampleInputPassword" className="sr-only">Password</label>
                                 <div className="position-relative has-icon-right">
-                                    <input type="password" id="exampleInputPassword" name="password" className="form-control input-shadow" 
-                                    placeholder="Enter Password"
+                                    <input type="password" id="exampleInputPassword" name="password" className="form-control input-shadow"
+                                        placeholder="Enter Password"
                                         onChange={(e) => {
                                             this.password = e.target.value;
                                         }} />
@@ -125,7 +137,7 @@ class login extends Component {
                             <div className="form-row">
                                 <div className="form-group col-6">
                                     <div className="icheck-material-white">
-                                        <input type="checkbox" id="user-checkbox"  />
+                                        <input type="checkbox" id="user-checkbox" />
                                         <label htmlFor="user-checkbox">Remember me</label>
                                     </div>
                                 </div>

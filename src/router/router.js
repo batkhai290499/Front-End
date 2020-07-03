@@ -16,16 +16,30 @@ import attendance from '../component/action/attendance';
 
 class router extends Component {
     render() {
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+
         return (
             <div>
                 <Header />
                 <MenuBar />
-                <Route path="/bend" component={bend} />
-                <Route path="/department" component={department} />
-                <Route path="/position" component={position}/>
-                <Route path="/salary" component={salary}/>
-                <Route path="/shift" component={shift}/>
-                <Route path="/attendance" component={attendance}/>
+                {
+                    dataUser[0].role == 1
+                        ?
+                        <>
+                            <Route path="/bend" component={bend} />
+                            <Route path="/department" component={department} />
+                            <Route path="/position" component={position} />
+                            <Route path="/salary" component={salary} />
+                            <Route path="/shift" component={shift} />
+                            <Route path="/attendance" component={attendance} />
+                        </>
+                        :
+                        dataUser[0].role == 3
+                            ?
+                            <Route path="/attendance" component={attendance} />
+                            : ""
+                }
+
                 <Footer />
             </div>
         );

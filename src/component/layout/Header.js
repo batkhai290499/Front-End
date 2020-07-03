@@ -1,6 +1,32 @@
 import React, { Component } from 'react'
 
 export default class Header extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            dataUsing: []
+        }
+    }
+
+    componentDidMount() {
+        //        var UserInfo = localStorage.getItem('userInfo')
+        // var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+        
+        // var data
+        // var dataLogin = []
+        // dataUser.forEach(e => {
+        //     data = { id: e.id, name: e.name }
+        //     dataLogin.push(data)
+        // })
+
+        // this.setState({
+        //     dataUsing: dataLogin
+        // })
+        // console.log(dataLogin);
+        
+        // console.log(this.state.dataUsing);
+        
+    }
 
     logout() {
         localStorage.clear();
@@ -8,10 +34,16 @@ export default class Header extends Component {
     }
     render() {
         var storedName = localStorage.getItem('isLogin');
-
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+        // var data
+        // var dataLogin = []
+        // dataUser.forEach(e => {
+        //     data = { id: e.id, name: e.name }
+        //     dataLogin.push(data)
+        // })
         if (storedName !== 'true') {
             window.location.href = '/';
-        } 
+        }
         return (
 
             <header className="topbar-nav">
@@ -57,8 +89,15 @@ export default class Header extends Component {
                                         <div className="media">
                                             <div className="avatar"><img className="align-self-start mr-3" src="https://via.placeholder.com/110x110" alt="user avatar" /></div>
                                             <div className="media-body">
-                                                <h6 className="mt-2 user-title">Sarajhon Mccoy</h6>
-                                                <p className="user-subtitle">mccoy@example.com</p>
+                                                {
+                                                    dataUser.map((item, key) =>
+                                                        <div key={key}>
+                                                            <h6 className="mt-2 user-title">{item.name}</h6>
+                                                            <p className="user-subtitle">{item.username}</p>
+                                                        </div>
+                                                    )
+                                                }
+
                                             </div>
                                         </div>
                                     </a>

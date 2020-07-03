@@ -9,15 +9,18 @@ class attendance extends Component {
         super(props);
         this.state = {
             attendance: [],
-            id_position: '',
-            money: '',
+            date: '',
             id_attendance: '',
-            selectedPosition: null,
+            id_shift: '',
+            id_account: '',
+            time_in: ''
 
         }
     }
     componentDidMount() {
-        Axios.get('/api/attendance/views')
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+
+        Axios.get(`/api/attendance/views/${dataUser[0].id}`)
             .then(res => {
                 if (res.status === 200) {
                     console.log(res);
@@ -30,7 +33,6 @@ class attendance extends Component {
             })
             .catch(error => console.log(error)
             );
-        this.getAllPosition()
     };
     handleInputChange = (event) => {
         const target = event.target;
@@ -39,73 +41,52 @@ class attendance extends Component {
         this.setState({
             [name]: value
         });
-        console.log(this.state.name);
-
-    };
-    getAllPosition = () => {
-        Axios.get('/api/position/getAll')
-            .then(res => {
-                if (res.status === 200) {
-                    const position = res.data;
-                    var dataPositionOption;
-                    var positionOption = [];
-
-                    position.position.forEach(e => {
-                        dataPositionOption = { value: e.id_position, label: e.position_name }
-                        positionOption.push(dataPositionOption)
-                    })
-                    this.setState({
-                        position: position.position,
-                        listPosition: positionOption
-                    });
-                    console.log(this.state.listPosition);
-
-                }
-            })
-            .catch(error => console.log(error)
-            );
-    }
-    handleChangePosition = (selectedPosition) => {
-        this.setState({ selectedPosition });
-    }
-    handleInsertattendance = (event) => {
-        //event.preventDefault();
-
-        const newattendance = {
-            //id_department: '',
-            money: this.state.money,
-            id_position: this.state.selectedPosition.value
-
-        };
         //console.log(this.state.name);
 
-        Axios.post('/api/attendance/insert', newattendance)
+    };
+
+    handleInsertAttendance = (event) => {
+        event.preventDefault();
+
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+
+
+        const newAttendance = {
+            //id_department: '',
+
+            id_account: dataUser[0].id,
+            id_shift: dataUser[0].shift,
+            date: moment(new Date().toLocaleDateString()).format('YYYY/MM/DD'),
+            time_in: new Date().toLocaleTimeString(),
+        };
+        console.log(newAttendance);
+
+        Axios.post('/api/attendance/insert', newAttendance)
             .then(res => {
                 let attendance = this.state.attendance;
-                attendance = [newattendance, ...attendance];
+                attendance = [newAttendance, ...attendance];
                 this.setState({ attendance: attendance });
             })
             .catch(error => console.log(error));
+        this.componentDidMount()
     };
 
-    getDataattendance = (item) => {
+    getDataAttendance = (item) => {
         console.log(item);
 
         this.setState({
             id_attendance: item.id_attendance,
-            money: item.money,
-            id_position: item.id_position,
-            position_name: item.position_name
+            time_out: item.time_out,
+            
         })
     }
 
-    handleEditattendance = (event) => {
+    handleEditAttendance = (event) => {
         event.preventDefault();
 
         const newEditPosition = {
             id_attendance: this.state.id_attendance,
-            money: this.state.money,
-            id_position: this.state.selectedPosition.value
+            time_out: new Date().toLocaleTimeString(),
         };
         console.log(newEditPosition);
 
@@ -117,8 +98,8 @@ class attendance extends Component {
                     attendance: prevState.attendance.map(
                         elm => elm.id_attendance === key ? {
                             ...elm,
-                            money: this.state.money,
-                            id_position: this.state.id_position
+                            time_out: new Date().toLocaleTimeString(),
+
                         } : elm
                     )
                 }))
@@ -133,29 +114,9 @@ class attendance extends Component {
     modalClose = () => {
         this.componentDidMount();
     }
-    deleteattendance = (item) => {
-        console.log(item);
-
-        const attendanceId = { id_attendance: item.id_attendance };
-        //console.log(attendanceId);
-
-        //console.log(newsId);
-        Axios.post('api/attendance/delete', attendanceId)
-
-            .then(res => {
-                this.setState(
-                    prevState => ({
-                        attendance: prevState.attendance.filter(elm => elm.id_attendance !== item.id_attendance)
-                    })
-                );
-                swal("Yeahh! You have successfully deleted!", {
-                    icon: "success",
-                });
-            })
-            .catch(error => console.log(error));
-    }
+    
     render() {
-        const { selectedPosition } = this.state;
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
 
         return (
             <div>
@@ -173,30 +134,54 @@ class attendance extends Component {
                                                 <div className="card-header text-uppercase">You Are Come In ?</div>
 
                                                 <div className="card-body">
-                                                    <form onSubmit={this.handleAttendance}>
+                                                    <form onSubmit={this.handleInsertAttendance}>
                                                         <div className="row">
                                                             <div className="col-12 col-lg-12 col-xl-12">
-                                                                <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Name</label>
-                                                                    <div className="col-sm-10">
-                                                                        <input type="cash" name="name" className="form-control"
-                                                                            onChange={this.handleInputChange} />
-                                                                    </div>
-                                                                    <label className="col-sm-12 col-form-label">Shift</label>
-                                                                    <div className="col-sm-10">
-                                                                        <input type="cash" name="name" className="form-control"
-                                                                            onChange={this.handleInputChange} />
-                                                                    </div>
-                                                                    <label className="col-sm-12 col-form-label">Time in</label>
-                                                                    <div className="col-sm-10">
-                                                                        <input name="time_in" className="form-control"
-                                                                            onChange={this.handleInputChange} value={new Date().toLocaleTimeString()} disabled />
-                                                                    </div>
-                                                                    <label className="col-sm-12 col-form-label">Time in</label>
-                                                                    <div className="col-sm-10">
-                                                                        <input name="time_in" className="form-control"
-                                                                            onChange={this.handleInputChange} value={new Date().toLocaleDateString()} disabled />
-                                                                    </div>
+
+
+                                                                {/* <input type="cash" name="name" className="form-control"
+                                                                            onChange={this.handleInputChange} /> */}
+                                                                {/* <Select
+                                                                        className="col-sm-10"
+                                                                        value={selectedShift}
+                                                                        onChange={this.handleChangeShift}
+                                                                        options={this.state.listShift}
+                                                                    /> */}
+                                                                {
+                                                                    dataUser.map((item, key) =>
+                                                                        <div className="form-group row" key={key}>
+                                                                            <label className="col-sm-12 col-form-label">Name</label>
+                                                                            <div className="col-sm-10">
+                                                                                <input type="cash" name="name" className="form-control"
+                                                                                    onChange={this.handleInputChange} value={item.id} readOnly />
+                                                                            </div>
+                                                                            <label className="col-sm-12 col-form-label">Shift</label>
+                                                                            <div className="col-sm-10">
+                                                                                <input type="cash" name="shift" className="form-control"
+                                                                                    onChange={this.handleInputChange} value=
+                                                                                    {
+                                                                                        item.shift == 1
+                                                                                            ?
+                                                                                            "Sang"
+                                                                                            : item.shift == 2
+                                                                                                ? "Chieu"
+                                                                                                : "Toi"
+                                                                                    } readOnly />
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                }
+
+
+                                                                <label className="col-sm-12 col-form-label">Time in</label>
+                                                                <div className="col-sm-10">
+                                                                    <input name="time_in" className="form-control"
+                                                                        onChange={this.handleInputChange} value={new Date().toLocaleTimeString()} readOnly />
+                                                                </div>
+                                                                <label className="col-sm-12 col-form-label">Today</label>
+                                                                <div className="col-sm-10">
+                                                                    <input name="date" className="form-control"
+                                                                        onChange={this.handleInputChange} value={new Date().toLocaleDateString()} readOnly />
                                                                 </div>
                                                             </div>
                                                         </div>{/*end row*/}
@@ -243,32 +228,8 @@ class attendance extends Component {
                                                             }</th>
                                                             <th>
                                                                 <button type="button" className="btn btn-light waves-effect waves-light m-1"
-                                                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataattendance(item)}> <i className="fa fa-edit" /></button>
-
-                                                                <button type="button" className="btn btn-light waves-effect waves-light m-1"
-                                                                    data-toggle="modal" data-target={"#modal-animation-" + item.id_attendance} > <i className="fa fa-times" /></button>
-                                                                <div className="modal fade" id={"modal-animation-" + item.id_attendance} style={{ display: 'none' }} aria-hidden="true">
-                                                                    <div className="modal-dialog modal-dialog-centered">
-                                                                        <div className="modal-content animated bounceIn">
-                                                                            <div className="modal-header">
-                                                                                <h5 className="modal-title">Alert</h5>
-                                                                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">×</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div className="modal-body">
-                                                                                <p>Do you want delete {this.state.name}</p>
-                                                                            </div>
-                                                                            <div className="modal-footer">
-                                                                                <button type="button" className="btn btn-light" data-dismiss="modal"><i className="fa fa-times" /> No</button>
-                                                                                <button type="button" className="btn btn-white" data-dismiss="modal" onClick={() => this.deleteattendance(item)}><i className="fa fa-square" /> Yes</button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
+                                                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataAttendance(item)}> <i className="fa fa-edit" /></button>
                                                             </th>
-
-
                                                             {/* onClick={() => this.deleteattendance(item)} */}
                                                         </tr>)}
                                                 </tbody>
@@ -281,40 +242,29 @@ class attendance extends Component {
                                     <div className="modal-dialog modal-md modal-dialog-centered">
                                         <div className="modal-content">
                                             <div className="card">
-                                                <div className="card-header text-uppercase">Edit attendance</div>
+                                                <div className="card-header text-uppercase">Attendance and go home</div>
 
                                                 <div className="card-body">
                                                     <form>
                                                         <div className="row">
                                                             <div className="col-12 col-lg-12 col-xl-12">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Edit attendance for Position</label>
+                                                                    <label className="col-sm-12 col-form-label">Check out</label>
                                                                     <div className="col-sm-10">
-                                                                        <input type="text" name="money" className="form-control"
-                                                                            onChange={this.handleInputChange} value={this.state.money} />
+                                                                        <label className="col-sm-12 col-form-label">Time Out</label>
+                                                                        <div className="col-sm-10">
+                                                                            <input name="time_out" className="form-control"
+                                                                                onChange={this.handleInputChange} value={new Date().toLocaleTimeString()} readOnly />
+                                                                        </div>
                                                                     </div>
-                                                                    <label className="col-sm-12 col-form-label">Edit Position</label>
-                                                                    <div className="col-sm-10">
-                                                                        {/* <input type="text" name="id_position" className="form-control"
-                                                                            onChange={this.handleInputChange} value={this.state.position_name} /> */}
-                                                                        <Select
-                                                                            value={selectedPosition}
-                                                                            onChange={this.handleChangePosition}
-                                                                            options={this.state.listPosition}
-                                                                            placeholder={this.state.position_name}
-                                                                        />
-                                                                    </div>
+
                                                                 </div>
                                                             </div>
-
-
                                                         </div>{/*end row*/}
-                                                        <button type="submit" className="btn btn-light px-5" onClick={this.handleEditattendance}><i className="icon-lock" />Edit</button>
-
+                                                        <button type="submit" className="btn btn-light px-5" onClick={this.handleEditAttendance}><i className="icon-lock" />Edit</button>
                                                     </form>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
