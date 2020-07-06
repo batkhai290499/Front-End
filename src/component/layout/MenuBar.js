@@ -23,7 +23,6 @@ class MenuBar extends Component {
                                         <NavLink to="/bend">
                                             <i className="zmdi zmdi-view-dashboard" /> <span>Account</span>
                                         </NavLink>
-
                                     </li>
                                     <li>
                                         <NavLink to="/department">
@@ -35,18 +34,21 @@ class MenuBar extends Component {
                                             <i className="zmdi zmdi-format-list-bulleted" /> <span>Position</span>
                                         </NavLink>
                                     </li>
-
                                     <li>
                                         <NavLink to="/salary">
                                             <i className="zmdi zmdi-grid" /> <span>Salary</span>
                                         </NavLink>
                                     </li>
-
                                     <li>
                                         <NavLink to="/shift">
                                             <i className="zmdi zmdi-calendar" /> <span>Shift</span>
                                         </NavLink>
                                     </li>
+                                     <li>
+                                        <NavLink to="/attendance">
+                                            <i className="zmdi zmdi-face" /> <span>Attendance</span>
+                                        </NavLink>
+                                    </li> 
                                 </>
                                 : dataUser[0].role == 3
                                     ?
@@ -57,8 +59,6 @@ class MenuBar extends Component {
                                     </li>
                                     : ""
                         }
-
-
 
                         {/*
                         <li>

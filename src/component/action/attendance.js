@@ -3,27 +3,48 @@ import Axios from 'axios';
 import swal from 'sweetalert';
 import Select from 'react-select';
 import moment from 'moment'
+import ReactExport from "react-data-export";
+import ReactPaginate from 'react-paginate';
+
+
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
+
 
 class attendance extends Component {
     constructor(props) {
         super(props);
         this.state = {
             attendance: [],
+            attendanceAll: [],
             date: '',
             id_attendance: '',
             id_shift: '',
             id_account: '',
-            time_in: ''
-
-        }
+            time_in: '',
+            shift: [],
+            shift_name: '',
+            offset: 0,
+            data: [],
+            perPage: 10,
+            currentPage: 0
+        };
+        this.handlePageClick = this
+            .handlePageClick
+            .bind(this);
     }
     componentDidMount() {
+        this.getAttendanceById();
+        this.getAllUserById()
+        this.getAllAttendance()
+    };
+    getAttendanceById() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
 
         Axios.get(`/api/attendance/views/${dataUser[0].id}`)
             .then(res => {
                 if (res.status === 200) {
-                    console.log(res);
 
                     const attendance = res.data;
                     this.setState({
@@ -33,7 +54,85 @@ class attendance extends Component {
             })
             .catch(error => console.log(error)
             );
+    }
+
+    getAllAttendance() {
+        Axios.get(`/api/attendance/views`)
+            .then(res => {
+                if (res.status === 200) {
+                    const attendanceAll = res.data;
+                    this.setState({
+                        attendanceAll: attendanceAll.attendanceAll,
+                    })
+                    const slice = this.state.attendanceAll.slice(this.state.offset, this.state.offset + this.state.perPage)
+                    const postData = slice.map((item, key) => <React.Fragment>
+                        <tr key={key}>
+                            <th>{key + 1}</th>
+                            <th>{item.name}</th>
+                            <th>{item.shift_name}</th>
+                            <th>{moment(item.date).format("L")}</th>
+                            <th>{moment(item.time_in, 'HH:mm').format("HH:mm")}</th>
+                            <th>{
+                                moment(item.time_out, 'HH:mm').format("HH:mm") == "00:00"
+                                    ?
+                                    <p></p>
+                                    :
+                                    moment(item.time_out, 'HH:mm').format("HH:mm")
+                            }</th>
+                            <th>
+                                <button type="button" className="btn btn-light waves-effect waves-light m-1"
+                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataAttendance(item)}> <i className="fa fa-edit" /></button>
+                            </th>
+                        </tr>
+                    </React.Fragment>)
+
+                    this.setState({
+                        pageCount: Math.ceil(this.state.attendanceAll.length / this.state.perPage),
+                        postData
+                    })
+                    console.log(slice);
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+
+    handlePageClick = (e) => {
+        const selectedPage = e.selected;
+        const offset = selectedPage * this.state.perPage;
+
+        this.setState({
+            currentPage: selectedPage,
+            offset: offset
+        }, () => {
+            this.getAllAttendance()
+        });
+
     };
+
+    getAllUserById = (item) => {
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+
+        Axios.get(`/api/account/getById/${dataUser[0].id}`)
+            .then(res => {
+                if (res.status === 200) {
+                    const listById = res.data[0];
+                    // var dep = this.state.listDepartment.filter((value) => {
+                    //     console.log(value.value)
+                    //     return  value.value == listById.id_department
+                    // })
+
+                    this.setState({
+                        selectedName: { value: listById.id_account, label: listById.name },
+                        selectedShift: { value: listById.id_shift, label: listById.shift_name },
+                    });
+                    console.log(this.state.selectedName);
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+
     handleInputChange = (event) => {
         const target = event.target;
         const value = target.value;
@@ -44,7 +143,12 @@ class attendance extends Component {
         //console.log(this.state.name);
 
     };
-
+    handleChangeShift = (selectedShift) => {
+        this.setState({ selectedShift });
+    }
+    handleChangeName = (selectedName) => {
+        this.setState({ selectedName });
+    }
     handleInsertAttendance = (event) => {
         event.preventDefault();
 
@@ -72,18 +176,13 @@ class attendance extends Component {
     };
 
     getDataAttendance = (item) => {
-        console.log(item);
-
         this.setState({
             id_attendance: item.id_attendance,
             time_out: item.time_out,
-            
         })
     }
-
     handleEditAttendance = (event) => {
         event.preventDefault();
-
         const newEditPosition = {
             id_attendance: this.state.id_attendance,
             time_out: new Date().toLocaleTimeString(),
@@ -114,16 +213,23 @@ class attendance extends Component {
     modalClose = () => {
         this.componentDidMount();
     }
-    
+
     render() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+        // this.state.shift.map((item,key) => {
+        //     this.state.shift_name = item.shift_name
+        // })
+        // console.log(this.state.shift_name);
+        const { selectedShift } = this.state;
+        const { selectedName } = this.state;
+
 
         return (
             <div>
                 <div className="content-wrapper">
                     <div className="container-fluid">
                         <div className="row ">
-                            <div className="col-lg-3">
+                            <div className="col-lg-2">
                                 {/* Large Size Modal */}
                                 <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">You Are Come In ?</button>
                                 {/* Modal */}
@@ -151,12 +257,25 @@ class attendance extends Component {
                                                                     dataUser.map((item, key) =>
                                                                         <div className="form-group row" key={key}>
                                                                             <label className="col-sm-12 col-form-label">Name</label>
-                                                                            <div className="col-sm-10">
+                                                                            {/* <div className="col-sm-10">
                                                                                 <input type="cash" name="name" className="form-control"
-                                                                                    onChange={this.handleInputChange} value={item.id} readOnly />
-                                                                            </div>
+                                                                                    onChange={this.handleInputChange} value=
+                                                                                    {
+                                                                                        item.id !== 1
+                                                                                        ?
+                                                                                            "12"
+                                                                                            : ""
+                                                                                    } readOnly />
+                                                                            </div> */}
+                                                                            <Select
+                                                                                className="col-sm-10"
+                                                                                value={selectedName}
+                                                                                onChange={this.handleChangeName}
+                                                                                options={this.state.listName}
+                                                                                isDisabled={true}
+                                                                            />
                                                                             <label className="col-sm-12 col-form-label">Shift</label>
-                                                                            <div className="col-sm-10">
+                                                                            {/* <div className="col-sm-10">
                                                                                 <input type="cash" name="shift" className="form-control"
                                                                                     onChange={this.handleInputChange} value=
                                                                                     {
@@ -167,7 +286,14 @@ class attendance extends Component {
                                                                                                 ? "Chieu"
                                                                                                 : "Toi"
                                                                                     } readOnly />
-                                                                            </div>
+                                                                            </div> */}
+                                                                            <Select
+                                                                                className="col-sm-10"
+                                                                                value={selectedShift}
+                                                                                onChange={this.handleChangeShift}
+                                                                                options={this.state.listShift}
+                                                                                isDisabled={true}
+                                                                            />
                                                                         </div>
                                                                     )
                                                                 }
@@ -188,6 +314,7 @@ class attendance extends Component {
                                                         <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Yes</button>
                                                     </form>
                                                 </div>
+
                                             </div>
 
                                         </div>
@@ -195,48 +322,106 @@ class attendance extends Component {
                                 </div>
                             </div>
                             <div className="col-lg-12">
-                                <div className="card">
-                                    <div className="card-body">
-                                        <h5 className="card-title">List attendance of Employee</h5>
-                                        <div className="table-responsive">
-                                            <table className="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col">No.</th>
-                                                        <th scope="col">Name</th>
-                                                        <th scope="col">Shift</th>
-                                                        <th scope="col">Date</th>
-                                                        <th scope="col">Time In</th>
-                                                        <th scope="col">Time Out</th>
-                                                        <th scope="col">Function</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {this.state.attendance.map((item, key) =>
-                                                        <tr key={key}>
-                                                            <th>{key + 1}</th>
-                                                            <th>{item.name}</th>
-                                                            <th>{item.shift_name}</th>
-                                                            <th>{moment(item.date).format("L")}</th>
-                                                            <th>{moment(item.time_in, 'HH:mm').format("HH:mm")}</th>
-                                                            <th>{
-                                                                moment(item.time_out, 'HH:mm').format("HH:mm") == "00:00"
-                                                                    ?
-                                                                    <p></p>
-                                                                    :
-                                                                    moment(item.time_out, 'HH:mm').format("HH:mm")
-                                                            }</th>
-                                                            <th>
-                                                                <button type="button" className="btn btn-light waves-effect waves-light m-1"
-                                                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataAttendance(item)}> <i className="fa fa-edit" /></button>
-                                                            </th>
-                                                            {/* onClick={() => this.deleteattendance(item)} */}
-                                                        </tr>)}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+
+                                {
+                                    dataUser[0].role == 1
+                                        ?
+                                        <>
+                                            <div className="card">
+                                                <div className="card-body">
+                                                    <h5 className="card-title">List All attendance of Employee</h5>
+                                                    <br />
+                                                    <ExcelFile element={<button className="btn btn-light px-5">Download Data</button>} >
+                                                        <ExcelSheet data={this.state.attendanceAll} name="Employees">
+                                                            <ExcelColumn label="Name" value="name" />
+                                                            <ExcelColumn label="Shift" value="shift_name" />
+                                                            <ExcelColumn label="Date" value="date" />
+                                                            <ExcelColumn label="Time In" value="time_in" />
+                                                            <ExcelColumn label="Time Out" value="time_out" />
+                                                        </ExcelSheet>
+                                                    </ExcelFile>
+
+                                                    <div className="table-responsive">
+                                                        <br />
+                                                        <table className="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">No.</th>
+                                                                    <th scope="col">Name</th>
+                                                                    <th scope="col">Shift</th>
+                                                                    <th scope="col">Date</th>
+                                                                    <th scope="col">Time In</th>
+                                                                    <th scope="col">Time Out</th>
+                                                                    <th scope="col">Function</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {this.state.postData}
+                                                            </tbody>
+                                                           
+                                                        </table>
+                                                        <ReactPaginate
+                                                                hideDisabled
+                                                                previousLabel={<a className="page-link">Previous</a>}
+                                                                nextLabel={<a className="page-link">Next</a>}
+                                                                pageCount={this.state.pageCount}
+                                                                marginPagesDisplayed={2}
+                                                                pageRangeDisplayed={5}
+                                                                onPageChange={this.handlePageClick}
+                                                                containerClassName={"pagination"}
+                                                                activeClassName={"page-item-active"}
+                                                                pageClassName={"page-link"} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                        :
+                                        <>
+                                            <div className="card">
+                                                <div className="card-body">
+                                                    <h5 className="card-title">List attendance of Employee</h5>
+                                                    <div className="table-responsive">
+                                                        <table className="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">No.</th>
+                                                                    <th scope="col">Name</th>
+                                                                    <th scope="col">Shift</th>
+                                                                    <th scope="col">Date</th>
+                                                                    <th scope="col">Time In</th>
+                                                                    <th scope="col">Time Out</th>
+                                                                    <th scope="col">Function</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {this.state.attendance.map((item, key) =>
+                                                                    <tr key={key}>
+                                                                        <th>{key + 1}</th>
+                                                                        <th>{item.name}</th>
+                                                                        <th>{item.shift_name}</th>
+                                                                        <th>{moment(item.date).format("L")}</th>
+                                                                        <th>{moment(item.time_in, 'HH:mm').format("HH:mm")}</th>
+                                                                        <th>{
+                                                                            moment(item.time_out, 'HH:mm').format("HH:mm") == "00:00"
+                                                                                ?
+                                                                                <p></p>
+                                                                                :
+                                                                                moment(item.time_out, 'HH:mm').format("HH:mm")
+                                                                        }</th>
+                                                                        <th>
+                                                                            <button type="button" className="btn btn-light waves-effect waves-light m-1"
+                                                                                data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataAttendance(item)}> <i className="fa fa-edit" /></button>
+                                                                        </th>
+                                                                        {/* onClick={() => this.deleteattendance(item)} */}
+                                                                    </tr>)}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                }
+
                                 {/* Modal */}
                                 <div className="modal fade" id="formemodaledit" style={{ display: 'none' }} aria-hidden="true">
                                     <div className="modal-dialog modal-md modal-dialog-centered">

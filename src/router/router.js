@@ -13,6 +13,7 @@ import position from '../component/action/position';
 import salary from '../component/action/salary';
 import shift from '../component/action/shift';
 import attendance from '../component/action/attendance';
+import test from '../component/action/test';
 
 class router extends Component {
     render() {
@@ -32,6 +33,8 @@ class router extends Component {
                             <Route path="/salary" component={salary} />
                             <Route path="/shift" component={shift} />
                             <Route path="/attendance" component={attendance} />
+                            <Route path="/test" component={test} />
+
                         </>
                         :
                         dataUser[0].role == 3

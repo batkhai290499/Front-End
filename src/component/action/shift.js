@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import swal from 'sweetalert';
 import moment from 'moment'
+import Select from 'react-select';
 
 class shift extends Component {
     constructor(props) {
@@ -18,7 +19,6 @@ class shift extends Component {
         Axios.get('/api/shift/views')
             .then(res => {
                 if (res.status === 200) {
-                    console.log(res);
 
                     const shift = res.data;
                     this.setState({
@@ -29,11 +29,11 @@ class shift extends Component {
             .catch(error => console.log(error)
             );
     };
-    handleInputChange = (event) => {
+    handleInputChange = async (event) => {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-        this.setState({
+        await this.setState({
             [name]: value
         });
         console.log(this.state.name);
