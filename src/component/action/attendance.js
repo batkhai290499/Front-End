@@ -79,10 +79,7 @@ class attendance extends Component {
                                     :
                                     moment(item.time_out, 'HH:mm').format("HH:mm")
                             }</th>
-                            <th>
-                                <button type="button" className="btn btn-light waves-effect waves-light m-1"
-                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataAttendance(item)}> <i className="fa fa-edit" /></button>
-                            </th>
+
                         </tr>
                     </React.Fragment>)
 
@@ -352,25 +349,25 @@ class attendance extends Component {
                                                                     <th scope="col">Date</th>
                                                                     <th scope="col">Time In</th>
                                                                     <th scope="col">Time Out</th>
-                                                                    <th scope="col">Function</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {this.state.postData}
                                                             </tbody>
-                                                           
+
                                                         </table>
                                                         <ReactPaginate
-                                                                hideDisabled
-                                                                previousLabel={<a className="page-link">Previous</a>}
-                                                                nextLabel={<a className="page-link">Next</a>}
-                                                                pageCount={this.state.pageCount}
-                                                                marginPagesDisplayed={2}
-                                                                pageRangeDisplayed={5}
-                                                                onPageChange={this.handlePageClick}
-                                                                containerClassName={"pagination"}
-                                                                activeClassName={"page-item-active"}
-                                                                pageClassName={"page-link"} />
+                                                            hideDisabled
+                                                            previousLabel={<a className="page-link">Previous</a>}
+                                                            nextLabel={<a className="page-link">Next</a>}
+                                                            pageCount={this.state.pageCount}
+                                                            marginPagesDisplayed={2}
+                                                            pageRangeDisplayed={5}
+                                                            onPageChange={this.handlePageClick}
+                                                            containerClassName={"pagination"}
+                                                            activeClassName={"page-item-active"}
+                                                            pageClassName={"page-link"}
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>

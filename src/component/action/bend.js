@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import Select from 'react-select';
 import swal from 'sweetalert';
+import openSocket from 'socket.io-client';
 
 class Bend extends Component {
     constructor(props) {
@@ -40,7 +41,10 @@ class Bend extends Component {
         this.getAllShift();
         this.getAllRole()
     };
-
+    componentWillMount() {
+        let socket = openSocket('http://localhost:4000/test')
+         console.log(socket);
+    }
     getUser = () => {
         axios.get('/api/account/views')
             .then(res => {
@@ -182,11 +186,11 @@ class Bend extends Component {
                         age: listById.age,
                         address: listById.address,
                         phone: listById.phone,
-                        selectedDepartment: {value: listById.id_department, label: listById.department_name},
-                        selectedSalary: {value: listById.id_salary, label: listById.money},
-                        selectedShift: {value: listById.id_shift, label: listById.shift_name},
-                        selectedPosition: {value: listById.id_position, label:listById.position_name},
-                        selectedRole: {value: listById.id_role, label: listById.role_name}
+                        selectedDepartment: { value: listById.id_department, label: listById.department_name },
+                        selectedSalary: { value: listById.id_salary, label: listById.money },
+                        selectedShift: { value: listById.id_shift, label: listById.shift_name },
+                        selectedPosition: { value: listById.id_position, label: listById.position_name },
+                        selectedRole: { value: listById.id_role, label: listById.role_name }
                     });
                     console.log(this.state.selectedDepartment);
                 }
@@ -252,7 +256,7 @@ class Bend extends Component {
                 });
                 this.modalClose()
             })
-            
+
 
             .catch(error => console.log(error));
     }
@@ -335,13 +339,11 @@ class Bend extends Component {
         const { selectedSalary } = this.state;
         const { selectedShift } = this.state;
         const { selectedRole } = this.state;
-        
         return (
             <div>
                 <div className="content-wrapper">
                     <div className="container-fluid">
-
-                        <div className="row ">
+                        <div className="row">
                             <div className="col-lg-2">
                                 {/* Large Size Modal */}
                                 <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">Create Account</button>
@@ -520,9 +522,9 @@ class Bend extends Component {
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                                
                                                             </th>
                                                         </tr>)}
-
                                                 </tbody>
                                             </table>
                                         </div>
