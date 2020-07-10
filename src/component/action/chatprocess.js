@@ -1,205 +1,203 @@
 import React, { Component } from 'react';
+import openSocket from 'socket.io-client';
+import axios from 'axios'
+
 
 class Chatprocess extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            news: [],
+            message: [],
+            chat_from: '',
+            content: '',
+            listById: [],
+            id_account: ''
+        }
+    }
+
+    componentDidMount() {
+        this.getUser()
+        this.getAllUserById()
+    }
+
+    componentWillMount() {
+        let socket = openSocket('http://localhost:4000/test')
+        console.log(socket);
+
+    }
+    getUser = () => {
+        axios.get('/api/account/views')
+            .then(res => {
+                if (res.status === 200) {
+                    const news = res.data;
+                    this.setState({ news: news.news });
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+    getAllUserById = (item) => {
+        axios.get(`/api/account/getById/${item}`)
+            .then(res => {
+                if (res.status === 200) {
+                    const listById = res.data[0];
+                    // var dep = this.state.listDepartment.filter((value) => {
+                    //     console.log(value.value)
+                    //     return  value.value == listById.id_department
+                    // })
+                    this.setState({
+                        id_account: listById.id_account,
+                        username: listById.username,
+                        name: listById.name,
+                    });
+                    console.log(this.state.id_account);
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+
+    handleInputChange = (event) => {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+            [name]: value
+        });
+        console.log(value);
+
+    };
+    
+    handleSendMessage = (event) => {
+
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+
+        const newMessage = {
+            chat_to: dataUser[0].id,
+            chat_from: this.state.id_account,
+            content: this.state.content,
+            time: new Date().toLocaleTimeString(),
+        };
+        console.log(this.state.chat_from);
+        console.log(this.state.content);
+        axios.post('/api/chat/insert', newMessage)
+            .then(res => {
+                let message = this.state.message;
+                message = [newMessage, ...message];
+                this.setState({ message: message });
+            })
+            .catch(error => console.log(error));
+    };
     render() {
         return (
             <div className="content-wrapper">
                 <div className="container-fluid">
                     <div className="row ">
-                        <div  className="col-12">
-                        <main className="col-10">
-                                <header>
-                                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
+                        <div className="col-12">
+                            <main className="col-10">
+                                <form onSubmit={this.handleSendMessage}>
                                     <div>
-                                        <h2>Chat with Vincent Porter</h2>
-                                        <h3>already 1902 messages</h3>
+                                        <header>
+                                            <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
+                                            <div>
+                                                <h2 name="chat_from" onChange={this.handleInputChange} >Chat with {this.state.id_account}</h2>
+                                                <h3>already count messages</h3>
+                                            </div>
+                                        </header>
+                                        <ul id="chat">
+                                            {/* <li className="you">
+                                                <div className="entete">
+                                                    <span className="status green" />
+                                                    <h2>Vincent</h2>
+                                                    <h3>10:12AM, Today</h3>
+                                                </div>
+                                                <div className="message">
+                                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                                        </div>
+                                            </li>
+                                            <li className="me">
+                                                <div className="entete">
+                                                    <h3>10:12AM, Today</h3>
+                                                    <h2>Vincent</h2>
+                                                    <span className="status blue" />
+                                                </div>
+                                                <div className="message">
+                                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                                        </div>
+                                            </li>
+                                            <li className="me">
+                                                <div className="entete">
+                                                    <h3>10:12AM, Today</h3>
+                                                    <h2>Vincent</h2>
+                                                    <span className="status blue" />
+                                                </div>
+                                                <div className="message">
+                                                    OK
+                                        </div>
+                                            </li>
+                                            <li className="you">
+                                                <div className="entete">
+                                                    <span className="status green" />
+                                                    <h2>Vincent</h2>
+                                                    <h3>10:12AM, Today</h3>
+                                                </div>
+                                                <div className="message">
+                                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                                        </div>
+                                            </li>
+                                            <li className="me">
+                                                <div className="entete">
+                                                    <h3>10:12AM, Today</h3>
+                                                    <h2>Vincent</h2>
+                                                    <span className="status blue" />
+                                                </div>
+                                                <div className="message">
+                                                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
+                                        </div>
+                                            </li>
+                                            <li className="me">
+                                                <div className="entete">
+                                                    <h3>10:12AM, Today</h3>
+                                                    <h2>Vincent</h2>
+                                                    <span className="status blue" />
+                                                </div>
+                                                <div className="message">
+                                                    OK
+                                        </div>
+                                            </li> */}
+                                        </ul>
+                                        <footer>
+                                            <textarea placeholder="Type your message" name="content" onChange={this.handleInputChange} />
+                                            <button type="submit" className="btn btn-success waves-effect waves-light m-1">SEND</button>
+                                        </footer>
                                     </div>
-                                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_star.png" alt="" />
-                                </header>
-                                <ul id="chat">
-                                    <li className="you">
-                                        <div className="entete">
-                                            <span className="status green" />
-                                            <h2>Vincent</h2>
-                                            <h3>10:12AM, Today</h3>
-                                        </div>
-                                        <div className="triangle" />
-                                        <div className="message">
-                                            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-                                        </div>
-                                    </li>
-                                    <li className="me">
-                                        <div className="entete">
-                                            <h3>10:12AM, Today</h3>
-                                            <h2>Vincent</h2>
-                                            <span className="status blue" />
-                                        </div>
-                                        <div className="triangle" />
-                                        <div className="message">
-                                            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-                                        </div>
-                                    </li>
-                                    <li className="me">
-                                        <div className="entete">
-                                            <h3>10:12AM, Today</h3>
-                                            <h2>Vincent</h2>
-                                            <span className="status blue" />
-                                        </div>
-                                        <div className="triangle" />
-                                        <div className="message">
-                                            OK
-                                        </div>
-                                    </li>
-                                    <li className="you">
-                                        <div className="entete">
-                                            <span className="status green" />
-                                            <h2>Vincent</h2>
-                                            <h3>10:12AM, Today</h3>
-                                        </div>
-                                        <div className="triangle" />
-                                        <div className="message">
-                                            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-                                        </div>
-                                    </li>
-                                    <li className="me">
-                                        <div className="entete">
-                                            <h3>10:12AM, Today</h3>
-                                            <h2>Vincent</h2>
-                                            <span className="status blue" />
-                                        </div>
-                                        <div className="triangle" />
-                                        <div className="message">
-                                            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
-                                        </div>
-                                    </li>
-                                    <li className="me">
-                                        <div className="entete">
-                                            <h3>10:12AM, Today</h3>
-                                            <h2>Vincent</h2>
-                                            <span className="status blue" />
-                                        </div>
-                                        <div className="triangle" />
-                                        <div className="message">
-                                            OK
-                                        </div>
-                                    </li>
-                                </ul>
-                                <footer>
-                                    <textarea placeholder="Type your message" defaultValue={""} />
-                                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png" alt="" />
-                                    <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png" alt="" />
-                                    <a href="#">Send</a>
-                                </footer>
+                                </form>
                             </main>
                             <aside className="col-2">
                                 <header>
                                     <input type="text" placeholder="search" />
                                 </header>
-                                <ul >
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status orange" />
-                                                offline
-                                            </h3>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_02.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status green" />
-                                                online
-                                            </h3>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_03.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status orange" />
-                                                offline
-                                            </h3>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_04.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status green" />
-                                            online
-                                        </h3>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_05.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status orange" />
-                                                offline
-                                            </h3>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_06.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status green" />
-                                                online
-                                            </h3>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_07.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status green" />
-                                                online
-                                            </h3>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_08.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status green" />
-                                            online
-                                        </h3>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_09.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status green" />
-                                                online
-                                            </h3>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_10.jpg" alt="" />
-                                        <div>
-                                            <h2>Prénom Nom</h2>
-                                            <h3>
-                                                <span className="status orange" />
-                                            offline
-                                        </h3>
-                                        </div>
-                                    </li>
-                                </ul>
 
+                                <ul >
+                                    {this.state.news.map((item, key) =>
+                                        <button onClick={() => this.getAllUserById(item.id_account)} data-target="#chat" key={key}>
+                                            <li>
+                                                <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
+                                                <div>
+                                                    <h2>{item.name}</h2>
+                                                    <h3>
+                                                        <span className="status orange" />
+                                                        offline
+                                                    </h3>
+                                                </div>
+                                            </li>
+                                        </button>
+                                    )}
+                                </ul>
                             </aside>
-                            
+
+
                         </div>
                     </div>
                 </div>

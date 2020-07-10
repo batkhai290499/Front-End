@@ -52,7 +52,6 @@ class Bend extends Component {
                     const news = res.data;
                     this.setState({ news: news.news });
                     console.log(this.state.news);
-
                 }
             })
             .catch(error => console.log(error)
