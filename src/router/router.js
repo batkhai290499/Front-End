@@ -40,7 +40,10 @@ class router extends Component {
                         :
                         dataUser[0].role == 3
                             ?
-                            <Route path="/attendance" component={attendance} />
+                            <>
+                                <Route path="/attendance" component={attendance} />
+                                <Route path="/chatprocess" component={chatprocess} />
+                            </>
                             : ""
                 }
 

@@ -30,7 +30,7 @@ class Chatprocess extends Component {
 
     getAllMessage = (item) => {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
-        axios.get(`/api/chat/views/${dataUser[0].id}/${item}`)
+        axios.get(`/api/chat/views/${item}/${dataUser[0].id}`)
             .then(res => {
                 if (res.status === 200) {
                     const message = res.data;
@@ -87,7 +87,7 @@ class Chatprocess extends Component {
     };
 
     handleSendMessage = (event) => {
-
+        event.preventDefault();
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
 
         const newMessage = {
@@ -98,7 +98,7 @@ class Chatprocess extends Component {
         };
         console.log(this.state.chat_from);
         console.log(this.state.content);
-        axios.post('/api/chat/insert', newMessage)
+        axios.post(`/api/chat/insert/${dataUser[0].id}/${this.state.id_account}`, newMessage)
             .then(res => {
                 let message = this.state.message;
                 message = [newMessage, ...message];
@@ -109,7 +109,7 @@ class Chatprocess extends Component {
     render() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
         console.log(dataUser[0]);
-        
+
         return (
             <div className="content-wrapper">
                 <div className="container-fluid">
@@ -130,23 +130,23 @@ class Chatprocess extends Component {
                                                 <>
                                                     {item.name !== dataUser[0].name
                                                         ?
-                                                        <li className="me">
+                                                        <li className="you">
                                                             <div className="entete">
-                                                                <h3>{item.name}</h3>
-                                                                <h2>{item.time}</h2>
-                                                                <span 
-                                                                className="status blue" />
+                                                                <span className="status green" />
+                                                                <h2>You </h2>
+                                                                <h3>{item.time}</h3>
                                                             </div>
                                                             <div className="message">
                                                                 {item.content}
                                                             </div>
                                                         </li>
                                                         :
-                                                        <li className="you">
+                                                        <li className="me">
                                                             <div className="entete">
-                                                                <span className="status green" />
-                                                                <h2>{item.name}</h2>
-                                                                <h3>{item.time}</h3>
+                                                                <h3>{this.state.name}</h3>
+                                                                <h2>{item.time}</h2>
+                                                                <span
+                                                                    className="status blue" />
                                                             </div>
                                                             <div className="message">
                                                                 {item.content}
@@ -159,7 +159,10 @@ class Chatprocess extends Component {
                                         </ul>
                                         <footer>
                                             <textarea placeholder="Type your message" name="content" onChange={this.handleInputChange} />
-                                            <button type="submit" className="btn btn-success waves-effect waves-light m-1">SEND</button>
+                                            <button type="submit" className="btn btn-success waves-effect waves-light m-1"
+                                                onClick={() => this.handleSendMessage(this.state.id_account), console.log(this.state.id_account)}>
+                                                SEND
+                                                </button>
                                         </footer>
                                     </div>
                                 </form>
