@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import openSocket from 'socket.io-client';
+import io from 'socket.io-client';
 import axios from 'axios'
-
+import $ from 'jquery'
 
 class Chatprocess extends Component {
     constructor(props) {
@@ -12,7 +12,7 @@ class Chatprocess extends Component {
             chat_from: '',
             content: '',
             listById: [],
-            id_account: ''
+            id_account: '',
         }
     }
 
@@ -20,11 +20,29 @@ class Chatprocess extends Component {
         this.getUser()
         this.getAllUserById()
         this.getAllMessage()
+
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+
+        // this.socket = openSocket("http://localhost:4000").on('connection', socket => {
+        //     socket.join('some room');
+        //   });;
+
+        // console.log('Open Socket')
+        // this.socket.on('connection', () => {
+        //     console.log('Connection Socket')
+        //     console.log(dataUser[0].id)
+        //     // 
+        // });
+        // console.log('Join room in Socket')
+        // this.socket.emit('connection', dataUser[0].id);
+        // this.socket.on('message', (id, msg) => {
+        //     console.log(msg);
+        // });
+
+
     }
 
     componentWillMount() {
-        let socket = openSocket('http://localhost:4000/test')
-        console.log(socket);
 
     }
 
@@ -37,7 +55,6 @@ class Chatprocess extends Component {
                     this.setState({
                         message: message.message,
                     })
-                    console.log(this.state.message);
                 }
             })
             .catch(error => console.log(error)
@@ -68,7 +85,6 @@ class Chatprocess extends Component {
                         username: listById.username,
                         name: listById.name,
                     });
-                    console.log(this.state.id_account);
                 }
             })
             .catch(error => console.log(error)
@@ -94,26 +110,45 @@ class Chatprocess extends Component {
             chat_to: dataUser[0].id,
             chat_from: this.state.id_account,
             content: this.state.content,
-            time: new Date().toLocaleTimeString(),
+            time: "CURRENT_TIMESTAMP",
         };
-        console.log(this.state.chat_from);
         console.log(this.state.content);
+        var socket = io("http://localhost:4000");
+        console.log(socket);
+        //client nhận dữ liệu từ server
+        socket.on("Server-sent-data", function (data) {
+            $("#chat-content").append(data);
+        });
+
+        //client gửi dữ liệu lên server
+        $(document).ready(function () {
+            $("#send").click(function () {
+                socket.emit("Client-sent-data", "Hello world");
+            });
+        });
         axios.post(`/api/chat/insert/${dataUser[0].id}/${this.state.id_account}`, newMessage)
             .then(res => {
-                let message = this.state.message;
-                message = [newMessage, ...message];
-                this.setState({ message: message });
+                let message1 = this.state.message;
+                message1 = [newMessage, ...message1];
+                this.setState({ message: message1 });
             })
             .catch(error => console.log(error));
+
+        
+
     };
+
+    xxx() {
+        
+    }
     render() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
-        console.log(dataUser[0]);
 
         return (
             <div className="content-wrapper">
                 <div className="container-fluid">
                     <div className="row ">
+                        <button id="send" onClick={ this.xxx}>xxx</button>
                         <div className="col-12">
                             <main className="col-10">
                                 <form onSubmit={this.handleSendMessage}>
@@ -134,7 +169,12 @@ class Chatprocess extends Component {
                                                             <div className="entete">
                                                                 <span className="status green" />
                                                                 <h2>You </h2>
-                                                                <h3>{item.time}</h3>
+                                                                <h3>{
+                                                                    item.time == "CURRENT_TIMESTAMP"
+                                                                        ?
+                                                                        new Date().toLocaleTimeString()
+                                                                        : ""
+                                                                }</h3>
                                                             </div>
                                                             <div className="message">
                                                                 {item.content}
@@ -144,7 +184,12 @@ class Chatprocess extends Component {
                                                         <li className="me">
                                                             <div className="entete">
                                                                 <h3>{this.state.name}</h3>
-                                                                <h2>{item.time}</h2>
+                                                                <h2>{
+                                                                    item.time == "CURRENT_TIMESTAMP"
+                                                                        ?
+                                                                        new Date().toLocaleTimeString()
+                                                                        : ""
+                                                                }</h2>
                                                                 <span
                                                                     className="status blue" />
                                                             </div>
@@ -159,8 +204,8 @@ class Chatprocess extends Component {
                                         </ul>
                                         <footer>
                                             <textarea placeholder="Type your message" name="content" onChange={this.handleInputChange} />
-                                            <button type="submit" className="btn btn-success waves-effect waves-light m-1"
-                                                onClick={() => this.handleSendMessage(this.state.id_account), console.log(this.state.id_account)}>
+                                            <button id="send" type="submit" className="btn btn-success waves-effect waves-light m-1"
+                                                onClick={this.handleSendMessage || this.xxx} >
                                                 SEND
                                                 </button>
                                         </footer>
@@ -189,8 +234,6 @@ class Chatprocess extends Component {
                                     )}
                                 </ul>
                             </aside>
-
-
                         </div>
                     </div>
                 </div>

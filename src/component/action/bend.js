@@ -41,10 +41,7 @@ class Bend extends Component {
         this.getAllShift();
         this.getAllRole()
     };
-    componentWillMount() {
-        let socket = openSocket('http://localhost:4000/test')
-         console.log(socket);
-    }
+  
     getUser = () => {
         axios.get('/api/account/views')
             .then(res => {
