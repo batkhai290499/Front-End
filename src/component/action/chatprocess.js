@@ -122,9 +122,8 @@ class Chatprocess extends Component {
 
         //client gửi dữ liệu lên server
         $(document).ready(function () {
-            $("#send").click(function () {
-                socket.emit("Client-sent-data", "Hello world");
-            });
+            
+                socket.emit("Client-sent-data", newMessage);
         });
         axios.post(`/api/chat/insert/${dataUser[0].id}/${this.state.id_account}`, newMessage)
             .then(res => {
@@ -138,9 +137,6 @@ class Chatprocess extends Component {
 
     };
 
-    xxx() {
-        
-    }
     render() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
 
@@ -148,7 +144,6 @@ class Chatprocess extends Component {
             <div className="content-wrapper">
                 <div className="container-fluid">
                     <div className="row ">
-                        <button id="send" onClick={ this.xxx}>xxx</button>
                         <div className="col-12">
                             <main className="col-10">
                                 <form onSubmit={this.handleSendMessage}>
@@ -205,7 +200,7 @@ class Chatprocess extends Component {
                                         <footer>
                                             <textarea placeholder="Type your message" name="content" onChange={this.handleInputChange} />
                                             <button id="send" type="submit" className="btn btn-success waves-effect waves-light m-1"
-                                                onClick={this.handleSendMessage || this.xxx} >
+                                                onClick={this.handleSendMessage } >
                                                 SEND
                                                 </button>
                                         </footer>
