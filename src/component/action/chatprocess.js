@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios'
-import $ from 'jquery'
+import Moment from 'moment';
 
 class Chatprocess extends Component {
     constructor(props) {
@@ -13,6 +13,8 @@ class Chatprocess extends Component {
             content: '',
             listById: [],
             id_account: '',
+            newMes: [],
+            mesBox: []
         }
     }
 
@@ -20,30 +22,26 @@ class Chatprocess extends Component {
         this.getUser()
         this.getAllUserById()
         this.getAllMessage()
-
-        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
-
-        // this.socket = openSocket("http://localhost:4000").on('connection', socket => {
-        //     socket.join('some room');
-        //   });;
-
-        // console.log('Open Socket')
-        // this.socket.on('connection', () => {
-        //     console.log('Connection Socket')
-        //     console.log(dataUser[0].id)
-        //     // 
-        // });
-        // console.log('Join room in Socket')
-        // this.socket.emit('connection', dataUser[0].id);
-        // this.socket.on('message', (id, msg) => {
-        //     console.log(msg);
-        // });
-
-
     }
 
-    componentWillMount() {
+    componentWillMount(item) {
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
 
+        var socket = io("http://localhost:4000");
+        var room = item + "," + dataUser[0].id;
+        //client nhận dữ liệu từ server
+        socket.on('connect', function () {
+            // Connected, let's sign-up for to receive messages for this room
+            socket.emit('room', room);
+        });
+
+        socket.on('message', (data) => {
+            var { message } = this.state
+            message.unshift(data)
+            this.setState({
+                message
+            })
+        });
     }
 
     getAllMessage = (item) => {
@@ -55,6 +53,7 @@ class Chatprocess extends Component {
                     this.setState({
                         message: message.message,
                     })
+
                 }
             })
             .catch(error => console.log(error)
@@ -76,10 +75,7 @@ class Chatprocess extends Component {
             .then(res => {
                 if (res.status === 200) {
                     const listById = res.data[0];
-                    // var dep = this.state.listDepartment.filter((value) => {
-                    //     console.log(value.value)
-                    //     return  value.value == listById.id_department
-                    // })
+
                     this.setState({
                         id_account: listById.id_account,
                         username: listById.username,
@@ -98,8 +94,6 @@ class Chatprocess extends Component {
         this.setState({
             [name]: value
         });
-        console.log(value);
-
     };
 
     handleSendMessage = (event) => {
@@ -110,36 +104,22 @@ class Chatprocess extends Component {
             chat_to: dataUser[0].id,
             chat_from: this.state.id_account,
             content: this.state.content,
-            time: "CURRENT_TIMESTAMP",
+            time: Moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
         };
-        console.log(this.state.content);
-        var socket = io("http://localhost:4000");
-        console.log(socket);
-        //client nhận dữ liệu từ server
-        socket.on("Server-sent-data", function (data) {
-            $("#chat-content").append(data);
-        });
-
-        //client gửi dữ liệu lên server
-        $(document).ready(function () {
-            
-                socket.emit("Client-sent-data", newMessage);
-        });
+        console.log(Moment(new Date()).format('YYYY-MM-DD HH:mm:ss'));
         axios.post(`/api/chat/insert/${dataUser[0].id}/${this.state.id_account}`, newMessage)
             .then(res => {
                 let message1 = this.state.message;
                 message1 = [newMessage, ...message1];
                 this.setState({ message: message1 });
+
             })
             .catch(error => console.log(error));
-
-        
-
     };
 
     render() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
-
+        var sort = this.state.message.sort()
         return (
             <div className="content-wrapper">
                 <div className="container-fluid">
@@ -152,47 +132,48 @@ class Chatprocess extends Component {
                                             <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
                                             <div>
                                                 <h2 name="chat_from" onChange={this.handleInputChange} >Chat with {this.state.name}</h2>
-                                                <h3>already count messages</h3>
+                                                <h3>{this.state.newMes.content}</h3>
                                             </div>
                                         </header>
                                         <ul id="chat">
-                                            {this.state.message.map((item, key) =>
+                                            {sort.map((item, key) =>
                                                 <>
-                                                    {item.name !== dataUser[0].name
+                                                    {item.chat_to !== dataUser[0].id
                                                         ?
-                                                        <li className="you">
-                                                            <div className="entete">
-                                                                <span className="status green" />
-                                                                <h2>You </h2>
-                                                                <h3>{
-                                                                    item.time == "CURRENT_TIMESTAMP"
-                                                                        ?
-                                                                        new Date().toLocaleTimeString()
-                                                                        : ""
-                                                                }</h3>
-                                                            </div>
-                                                            <div className="message">
-                                                                {item.content}
-                                                            </div>
-                                                        </li>
+                                                        <>
+                                                            <li className="you">
+                                                                <div className="entete">
+                                                                    <span className="status green" />
+                                                                    <h2>{this.state.name} </h2>
+                                                                    <h3>{
+                                                                        Moment(item.time).format(" HH:mm:ss")
+                                                                    }</h3>
+                                                                </div>
+                                                                <div className="message">
+                                                                    {item.content}
+                                                                </div>
+                                                            </li>
+
+                                                        </>
                                                         :
-                                                        <li className="me">
-                                                            <div className="entete">
-                                                                <h3>{this.state.name}</h3>
-                                                                <h2>{
-                                                                    item.time == "CURRENT_TIMESTAMP"
-                                                                        ?
-                                                                        new Date().toLocaleTimeString()
-                                                                        : ""
-                                                                }</h2>
-                                                                <span
-                                                                    className="status blue" />
-                                                            </div>
-                                                            <div className="message">
-                                                                {item.content}
-                                                            </div>
-                                                        </li>
+                                                        <>
+                                                            <li className="me">
+                                                                <div className="entete">
+                                                                    <h3> You</h3>
+                                                                    <h2>{
+                                                                        Moment(item.time).format(" HH:mm:ss")
+                                                                    }</h2>
+                                                                    <span
+                                                                        className="status blue" />
+                                                                </div>
+                                                                <div className="message">
+                                                                    {item.content}
+                                                                </div>
+                                                            </li>
+                                                        </>
+
                                                     }
+
                                                 </>
                                             )}
 
@@ -200,7 +181,7 @@ class Chatprocess extends Component {
                                         <footer>
                                             <textarea placeholder="Type your message" name="content" onChange={this.handleInputChange} />
                                             <button id="send" type="submit" className="btn btn-success waves-effect waves-light m-1"
-                                                onClick={this.handleSendMessage } >
+                                                onClick={this.handleSendMessage} >
                                                 SEND
                                                 </button>
                                         </footer>
@@ -214,15 +195,12 @@ class Chatprocess extends Component {
 
                                 <ul >
                                     {this.state.news.map((item, key) =>
-                                        <button onClick={() => this.getAllUserById(item.id_account) || this.getAllMessage(item.id_account)} data-target="#chat" key={key}>
+                                        <button onClick={() => this.getAllUserById(item.id_account) || this.getAllMessage(item.id_account) || this.componentWillMount(item.id_account)} data-target="#chat" key={key}>
                                             <li>
                                                 <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
                                                 <div>
                                                     <h2>{item.name}</h2>
-                                                    <h3>
-                                                        <span className="status orange" />
-                                                        offline
-                                                    </h3>
+
                                                 </div>
                                             </li>
                                         </button>

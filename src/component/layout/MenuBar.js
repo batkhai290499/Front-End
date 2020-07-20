@@ -44,19 +44,31 @@ class MenuBar extends Component {
                                             <i className="zmdi zmdi-calendar" /> <span>Shift</span>
                                         </NavLink>
                                     </li>
-                                     <li>
-                                        <NavLink to="/attendance">
-                                            <i className="zmdi zmdi-face" /> <span>Attendance</span>
-                                        </NavLink>
-                                    </li> 
-                                </>
-                                : dataUser[0].role == 3
-                                    ?
                                     <li>
                                         <NavLink to="/attendance">
                                             <i className="zmdi zmdi-face" /> <span>Attendance</span>
                                         </NavLink>
                                     </li>
+                                    <li>
+                                        <NavLink to="/chatprocess">
+                                            <i className="zmdi zmdi-lock" /> <span>Chat</span>
+                                        </NavLink>
+                                    </li>
+                                </>
+                                : dataUser[0].role == 3
+                                    ?
+                                    <>
+                                        <li>
+                                            <NavLink to="/attendance">
+                                                <i className="zmdi zmdi-face" /> <span>Attendance</span>
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/chatprocess">
+                                                <i className="zmdi zmdi-lock" /> <span>Chat</span>
+                                            </NavLink>
+                                        </li>
+                                    </>
                                     : ""
                         }
 
