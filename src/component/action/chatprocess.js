@@ -14,7 +14,6 @@ class Chatprocess extends Component {
             listById: [],
             id_account: '',
             newMes: [],
-            mesBox: []
         }
     }
 
@@ -29,9 +28,7 @@ class Chatprocess extends Component {
 
         var socket = io("http://localhost:4000");
         var room = item + "," + dataUser[0].id;
-        //client nhận dữ liệu từ server
         socket.on('connect', function () {
-            // Connected, let's sign-up for to receive messages for this room
             socket.emit('room', room);
         });
 
@@ -195,7 +192,8 @@ class Chatprocess extends Component {
 
                                 <ul >
                                     {this.state.news.map((item, key) =>
-                                        <button onClick={() => this.getAllUserById(item.id_account) || this.getAllMessage(item.id_account) || this.componentWillMount(item.id_account)} data-target="#chat" key={key}>
+                                        <button onClick={() => this.getAllUserById(item.id_account) || this.getAllMessage(item.id_account) || this.componentWillMount(item.id_account)} 
+                                        data-target="#chat" key={key}>
                                             <li>
                                                 <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
                                                 <div>
