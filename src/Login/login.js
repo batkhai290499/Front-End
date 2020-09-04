@@ -85,11 +85,13 @@ class login extends Component {
                     dataUser.push(data)
                 })
                 localStorage.setItem('userInfo', JSON.stringify(dataUser))
+                console.log(dataUser);
                 if (dataUser[0].role == 1) {
                     window.location.href = '/bend';                    
+                }else if (dataUser[0].role == 2) {
+                    window.location.href = '/producer'
                 }else if (dataUser[0].role == 3){
                     window.location.href = '/attendance';                    
-
                 }
             } else {
                 this.setState({ 'error': 1 });

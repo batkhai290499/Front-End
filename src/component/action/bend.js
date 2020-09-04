@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import Select from 'react-select';
 import swal from 'sweetalert';
-import openSocket from 'socket.io-client';
 
 class Bend extends Component {
     constructor(props) {
@@ -41,7 +40,7 @@ class Bend extends Component {
         this.getAllShift();
         this.getAllRole()
     };
-  
+
     getUser = () => {
         axios.get('/api/account/views')
             .then(res => {
@@ -329,6 +328,27 @@ class Bend extends Component {
         this.componentDidMount();
     }
 
+    deleteUser = (item) => {
+
+        const accountId = { id_account: item.id_account };
+        //console.log(accountId);
+
+        //console.log(newsId);
+        axios.post('/api/account/delete', accountId)
+
+            .then(res => {
+                this.setState(
+                    prevState => ({
+                        news: prevState.news.filter(elm => elm.id_account !== item.id_account)
+                    })
+                );
+                swal("Yeahh! You have successfully deleted!", {
+                    icon: "success",
+                });
+            })
+            .catch(error => console.log(error));
+    }
+
     render() {
         const { selectedDepartment } = this.state;
         const { selectedPosition } = this.state;
@@ -513,12 +533,12 @@ class Bend extends Component {
                                                                             </div>
                                                                             <div className="modal-footer">
                                                                                 <button type="button" className="btn btn-light" data-dismiss="modal"><i className="fa fa-times" /> No</button>
-                                                                                <button type="button" className="btn btn-white" data-dismiss="modal" onClick={() => this.deletePosition(item)}><i className="fa fa-square" /> Yes</button>
+                                                                                <button type="button" className="btn btn-white" data-dismiss="modal" onClick={() => this.deleteUser(item)}><i className="fa fa-square" /> Yes</button>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                
+
                                                             </th>
                                                         </tr>)}
                                                 </tbody>

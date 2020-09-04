@@ -35,6 +35,7 @@ export default class Header extends Component {
     render() {
         var storedName = localStorage.getItem('isLogin');
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+
         // var data
         // var dataLogin = []
         // dataUser.forEach(e => {
