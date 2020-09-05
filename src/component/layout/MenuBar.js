@@ -54,6 +54,12 @@ class MenuBar extends Component {
                                             <i className="zmdi zmdi-lock" /> <span>Chat</span>
                                         </NavLink>
                                     </li>
+                                    <li>
+                                        <NavLink to="/mission">
+                                            <i className="zmdi zmdi-account-circle" /> <span>Registration</span>
+                                        </NavLink>
+                                    </li>
+
                                 </>
                                 : dataUser[0].role == 3
                                     ?

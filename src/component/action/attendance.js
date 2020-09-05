@@ -271,9 +271,7 @@ class attendance extends Component {
                                                                                 options={this.state.listName}
                                                                                 isDisabled={true}
                                                                             />
-                                                                            {/* them phan giao viec */}
-                                                                            {/* xin nghi phep */}
-                                                                            {/* timeline di lam muon va tinh tien luong theo so gio di lam */}
+                                                                            
                                                                             <label className="col-sm-12 col-form-label">Shift</label>
                                                                             {/* <div className="col-sm-10">
                                                                                 <input type="cash" name="shift" className="form-control"

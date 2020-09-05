@@ -15,6 +15,7 @@ import shift from '../component/action/shift';
 import attendance from '../component/action/attendance';
 import chatprocess from '../component/action/chatprocess';
 import producter from '../component/action/producter';
+import mission from '../component/action/mission';
 
 
 class router extends Component {
@@ -36,6 +37,7 @@ class router extends Component {
                             <Route path="/shift" component={shift} />
                             <Route path="/attendance" component={attendance} />
                             <Route path="/chatprocess" component={chatprocess} />
+                            <Route path="/mission" component={mission} />
 
                         </>
                         :
