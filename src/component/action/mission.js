@@ -44,13 +44,11 @@ class mission extends Component {
     }
     onFileUpload = (event) => {
         event.preventDefault();
-        for (let i = 0; i < this.state.selectedEmployee.length; i++) {
-            const element = this.state.selectedEmployee[i];
-            console.log(element);
-        }
+        // for (let i = 0; i < this.state.selectedEmployee.length; i++) {
+        //     const element = this.state.selectedEmployee[i];
+        //     console.log(element);
+        // }
         const formData = new FormData();
-        
-
         formData.append(
             "name_file", this.state.selectedFile.name,
         );
@@ -126,7 +124,7 @@ class mission extends Component {
                                                         value={selectedEmployee}
                                                         onChange={this.handleChangeEmployee}
                                                         options={this.state.listEmployee}
-                                                       // isMulti = {true}
+                                                    // isMulti = {true}
                                                     //className = "form-control form-control multiple-select"
                                                     />
                                                 </div>
@@ -145,13 +143,75 @@ class mission extends Component {
                                                 </div>
                                             </div>
                                             <div className="form-footer">
-                                                <button type="submit" className="btn btn-success" onClick={this.onFileUpload}><i className="fa fa-check-square-o" /> SAVE</button>
+                                                <button type="submit" className="btn btn-success" onClick={this.onFileUpload}><i className="fa fa-check-square-o" /> SEND</button>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
+                            <div className="col-lg-6">
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h5 className="card-title">List Account</h5>
+                                        <div className="table-responsive">
+                                            <table className="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Title</th>
+                                                        <th scope="col">Employee</th>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Age</th>
+                                                        <th scope="col">Address</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        <div className="row">
+                            <div className="col-12 col-lg-4">
+                                <h6 class="text-uppercase">Cards With images</h6>
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h4 className="card-title">Card title</h4>
+                                        <h6>Praesent commodo cursus magna.</h6>
+                                        <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        <hr />
+                                        <a href="javascript:void();" className="btn btn-light btn-sm text-white"><i className="fa fa-star mr-1" /> Go Somewhere</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-12 col-lg-4">
+                                <h6 class="text-uppercase">Cards With images</h6>
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h4 className="card-title">Card title</h4>
+                                        <h6>Praesent commodo cursus magna.</h6>
+                                        <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        <hr />
+                                        <a href="javascript:void();" className="btn btn-light btn-sm text-white"><i className="fa fa-star mr-1" /> Go Somewhere</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-12 col-lg-4">
+                                <h6 class="text-uppercase">Cards With images</h6>
+                                <div className="card">
+                                    <div className="card-body">
+                                        <h4 className="card-title">Card title</h4>
+                                        <h6>Praesent commodo cursus magna.</h6>
+                                        <p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                        <hr />
+                                        <a href="javascript:void();" className="btn btn-light btn-sm text-white"><i className="fa fa-star mr-1" /> Go Somewhere</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
