@@ -208,6 +208,7 @@ class Bend extends Component {
 
     handleChangeShift = (selectedShift) => {
         this.setState({ selectedShift });
+        console.log(this.state.selectedShift);
     }
 
     handleChangeRole = (selectedRole) => {

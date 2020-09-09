@@ -6177,7 +6177,13 @@ table.grid td {
 
 
 }
-
+/* The popup form - hidden by default */
+.form-popup {
+    display: none;
+    position: fixed;
+    right: 15px;
+    z-index: 9;
+  }
 
 
 
