@@ -184,7 +184,6 @@ class attendance extends Component {
             id_attendance: this.state.id_attendance,
             time_out: new Date().toLocaleTimeString(),
         };
-        console.log(newEditPosition);
 
         Axios.post('/api/attendance/edit', newEditPosition)
             .then(res => {

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios'
 import swal from 'sweetalert';
 import Select from 'react-select';
+import moment from 'moment'
 
 class mission extends Component {
     constructor(props) {
@@ -12,7 +13,8 @@ class mission extends Component {
             title: '',
             id_account: '',
             comment: '',
-            selectedEmployee: null
+            selectedEmployee: null,
+            end_time: ''
         }
     }
     componentDidMount() {
@@ -48,6 +50,7 @@ class mission extends Component {
         //     const element = this.state.selectedEmployee[i];
         //     console.log(element);
         // }
+        var d = new Date()
         const formData = new FormData();
         formData.append(
             "name_file", this.state.selectedFile.name,
@@ -64,6 +67,16 @@ class mission extends Component {
         formData.append(
             "image", this.state.selectedFile,
         );
+        formData.append(
+            "start_time", d.toLocaleDateString('zh-Hans-CN')
+        );
+        formData.append(
+            "end_time", this.state.end_time
+        );
+        formData.append(
+            "status", "2"
+        );
+            //console.log(d.toLocaleDateString());
         axios.post('/upload', formData)
             .then(res => {
                 swal("Yeahh! You have successfully edited!", {
@@ -140,6 +153,13 @@ class mission extends Component {
                                                 <div className="col-sm-10">
                                                     <textarea className="form-control" rows={4} id="input-9" name="comment"
                                                         value={this.state.comment} onChange={this.handleInputChange} />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label">Date</label>
+                                                <div class="col-sm-10">
+                                                    <input type="date" class="form-control" name="end_time"
+                                                        onChange={this.handleInputChange} />
                                                 </div>
                                             </div>
                                             <div className="form-footer">
