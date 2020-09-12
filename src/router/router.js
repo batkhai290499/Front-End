@@ -54,6 +54,8 @@ class router extends Component {
                                     <Route path="/chatprocess" component={chatprocess} />
                                     <Route path="/shift" component={shift} />
                                     <Route path="/salary" component={salary} />
+                                    <Route path="/mission" component={mission} />
+
                                 </>
                                 :
                                 dataUser[0].role == 4 // role 4 is Employee

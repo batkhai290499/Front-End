@@ -28,7 +28,9 @@ class attendance extends Component {
             offset: 0,
             data: [],
             perPage: 10,
-            currentPage: 0
+            currentPage: 0,
+            salary: [],
+            totalSalary: ''
         };
         this.handlePageClick = this
             .handlePageClick
@@ -42,7 +44,7 @@ class attendance extends Component {
     getAttendanceById() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
 
-        Axios.get(`/api/attendance/views/${dataUser[0].id}`)
+        Axios.get(`/api/attendances/views/${dataUser[0].id}`)
             .then(res => {
                 if (res.status === 200) {
 
@@ -50,6 +52,8 @@ class attendance extends Component {
                     this.setState({
                         attendance: attendance.attendance,
                     })
+
+
                 }
             })
             .catch(error => console.log(error)
@@ -64,30 +68,56 @@ class attendance extends Component {
                     this.setState({
                         attendanceAll: attendanceAll.attendanceAll,
                     })
-                    const slice = this.state.attendanceAll.slice(this.state.offset, this.state.offset + this.state.perPage)
-                    const postData = slice.map((item, key) => <React.Fragment>
-                        <tr key={key}>
-                            <th>{key + 1}</th>
-                            <th>{item.name}</th>
-                            <th>{item.shift_name}</th>
-                            <th>{moment(item.date).format("L")}</th>
-                            <th>{moment(item.time_in, 'HH:mm').format("HH:mm")}</th>
-                            <th>{
-                                moment(item.time_out, 'HH:mm').format("HH:mm") == "00:00"
-                                    ?
-                                    <p></p>
-                                    :
-                                    moment(item.time_out, 'HH:mm').format("HH:mm")
-                            }</th>
+                    var a = []
+                    var b = 0
+                    var salaryEachDay = 0
+                    for (let i = 0; i < this.state.attendanceAll.length; i++) {
+                        var element = this.state.attendanceAll[i];
+                        console.log(element);
+                        var startDate = Date.parse(element.time_in);
+                        var endDate = Date.parse(element.time_out);
 
-                        </tr>
-                    </React.Fragment>)
+                        var totalTime = Math.floor((endDate - startDate) / (1000 * 60 * 60));
+                        console.log(totalTime);
 
+                        var salary = element.salary;
+
+                        salaryEachDay = b + Math.floor(totalTime * salary)
+                        b = salaryEachDay
+                        a.push(salaryEachDay)
+
+                    }
+
+                    console.log(b);
+
+
+                    const slice = this.state.attendanceAll.slice(this.state.offset,
+                        this.state.offset + this.state.perPage)
+                    var postData = slice.map((item, key) =>
+                        <React.Fragment>
+                            <tr key={key}>
+                                <th>{key + 1}</th>
+                                <th>{item.name}</th>
+                                <th>{item.salary}</th>
+                                <th>{moment(item.date).format("L")}</th>
+                                <th>{moment(item.time_in).format("HH:mm")}</th>
+                                <th>{
+                                    moment(item.time_out).format("HH:mm") == "Invalid date"
+                                        ?
+                                        <p></p>
+                                        :
+                                        moment(item.time_out).format("HH:mm")
+                                }</th>
+                                <th>
+                                    {Math.floor(Math.floor((Date.parse(item.time_out) - Date.parse(item.time_in)) / (1000 * 60 * 60)) * item.salary)} $
+                                </th>
+                            </tr>
+                        </React.Fragment>)
                     this.setState({
                         pageCount: Math.ceil(this.state.attendanceAll.length / this.state.perPage),
-                        postData
+                        postData,
+                        totalSalary: b
                     })
-                    console.log(slice);
                 }
             })
             .catch(error => console.log(error)
@@ -123,7 +153,6 @@ class attendance extends Component {
                         selectedName: { value: listById.id_account, label: listById.name },
                         selectedShift: { value: listById.id_shift, label: listById.shift_name },
                     });
-                    console.log(this.state.selectedName);
                 }
             })
             .catch(error => console.log(error)
@@ -150,7 +179,7 @@ class attendance extends Component {
         event.preventDefault();
 
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
-
+        const date1 = new Date();
 
         const newAttendance = {
             //id_department: '',
@@ -158,7 +187,7 @@ class attendance extends Component {
             id_account: dataUser[0].id,
             id_shift: dataUser[0].shift,
             date: moment(new Date().toLocaleDateString()).format('YYYY/MM/DD'),
-            time_in: new Date().toLocaleTimeString(),
+            time_in: date1,
         };
         console.log(newAttendance);
 
@@ -182,7 +211,7 @@ class attendance extends Component {
         event.preventDefault();
         const newEditPosition = {
             id_attendance: this.state.id_attendance,
-            time_out: new Date().toLocaleTimeString(),
+            time_out: new Date(),
         };
 
         Axios.post('/api/attendance/edit', newEditPosition)
@@ -219,7 +248,10 @@ class attendance extends Component {
         const { selectedShift } = this.state;
         const { selectedName } = this.state;
 
-
+        const date1 = new Date();
+        // Sun Dec 17 1995 03:24:00 GMT...
+        
+        console.log(date1);
         return (
             <div>
                 <div className="content-wrapper">
@@ -270,7 +302,7 @@ class attendance extends Component {
                                                                                 options={this.state.listName}
                                                                                 isDisabled={true}
                                                                             />
-                                                                            
+
                                                                             <label className="col-sm-12 col-form-label">Shift</label>
                                                                             {/* <div className="col-sm-10">
                                                                                 <input type="cash" name="shift" className="form-control"
@@ -349,10 +381,21 @@ class attendance extends Component {
                                                                     <th scope="col">Date</th>
                                                                     <th scope="col">Time In</th>
                                                                     <th scope="col">Time Out</th>
+                                                                    <th scope='col'>Salary(each)</th>
+
                                                                 </tr>
                                                             </thead>
+
                                                             <tbody>
                                                                 {this.state.postData}
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th>Total Salary is</th>
+                                                                <th>{this.state.totalSalary} $</th>
+
                                                             </tbody>
 
                                                         </table>
@@ -397,13 +440,13 @@ class attendance extends Component {
                                                                         <th>{item.name}</th>
                                                                         <th>{item.shift_name}</th>
                                                                         <th>{moment(item.date).format("L")}</th>
-                                                                        <th>{moment(item.time_in, 'HH:mm').format("HH:mm")}</th>
+                                                                        <th>{moment(item.time_in).format("HH:mm")}</th>
                                                                         <th>{
-                                                                            moment(item.time_out, 'HH:mm').format("HH:mm") == "00:00"
+                                                                            moment(item.time_out).format("HH:mm") == "Invalid date"
                                                                                 ?
                                                                                 <p></p>
                                                                                 :
-                                                                                moment(item.time_out, 'HH:mm').format("HH:mm")
+                                                                                moment(item.time_out).format("HH:mm")
                                                                         }</th>
                                                                         <th>
                                                                             <button type="button" className="btn btn-light waves-effect waves-light m-1"

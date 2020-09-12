@@ -155,8 +155,6 @@ class Bend extends Component {
                         role: role.role,
                         listRole: roleOption
                     });
-                    console.log(this.state.listRole);
-
                 }
             })
             .catch(error => console.log(error)
@@ -187,7 +185,6 @@ class Bend extends Component {
                         selectedPosition: { value: listById.id_position, label: listById.position_name },
                         selectedRole: { value: listById.id_role, label: listById.role_name }
                     });
-                    console.log(this.state.selectedDepartment);
                 }
             })
             .catch(error => console.log(error)
@@ -221,8 +218,6 @@ class Bend extends Component {
         this.setState({
             [name]: value
         });
-        console.log(value);
-
     };
 
     handleInsertUser = (event) => {
@@ -293,7 +288,6 @@ class Bend extends Component {
             id_shift: this.state.selectedShift.value,
             id_role: this.state.selectedRole.value,
         };
-        console.log(newEditUser);
 
         axios.post('/api/user/edit', newEditUser)
             .then(res => {

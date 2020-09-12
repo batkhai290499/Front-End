@@ -56,7 +56,7 @@ class MenuBar extends Component {
                                     </li>
                                     <li>
                                         <NavLink to="/mission">
-                                            <i className="zmdi zmdi-account-circle" /> <span>Registration</span>
+                                            <i className="zmdi zmdi-account-circle" /> <span>Mission</span>
                                         </NavLink>
                                     </li>
 
@@ -72,6 +72,11 @@ class MenuBar extends Component {
                                         <li>
                                             <NavLink to="/chatprocess">
                                                 <i className="zmdi zmdi-lock" /> <span>Chat</span>
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/mission">
+                                                <i className="zmdi zmdi-account-circle" /> <span>Mission</span>
                                             </NavLink>
                                         </li>
                                     </>
