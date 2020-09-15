@@ -1428,7 +1428,7 @@ body.bg-theme15 {
 .modal-content{
     border-radius: 0.25rem;
 	font-size: 14px;
-	background: #000;
+	background: rgba(0,0,0,0.6);
 }
 .close{
 	font-size: 1.4rem;

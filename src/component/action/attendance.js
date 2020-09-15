@@ -30,7 +30,8 @@ class attendance extends Component {
             perPage: 10,
             currentPage: 0,
             salary: [],
-            totalSalary: ''
+            totalSalary: '',
+            news: []
         };
         this.handlePageClick = this
             .handlePageClick
@@ -39,7 +40,7 @@ class attendance extends Component {
     componentDidMount() {
         this.getAttendanceById();
         this.getAllUserById()
-        this.getAllAttendance()
+        this.getUser();
     };
     getAttendanceById() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
@@ -47,21 +48,29 @@ class attendance extends Component {
         Axios.get(`/api/attendances/views/${dataUser[0].id}`)
             .then(res => {
                 if (res.status === 200) {
-
                     const attendance = res.data;
                     this.setState({
                         attendance: attendance.attendance,
                     })
-
-
                 }
             })
             .catch(error => console.log(error)
             );
     }
-
-    getAllAttendance() {
-        Axios.get(`/api/attendance/views`)
+    getUser = () => {
+        Axios.get('/api/account/views')
+            .then(res => {
+                if (res.status === 200) {
+                    const news = res.data;
+                    this.setState({ news: news.news });
+                    console.log(this.state.news);
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+    getAllAttendance = (item) => {
+        Axios.get(`/api/attendance/views/${item}`)
             .then(res => {
                 if (res.status === 200) {
                     const attendanceAll = res.data;
@@ -85,7 +94,6 @@ class attendance extends Component {
                         salaryEachDay = b + Math.floor(totalTime * salary)
                         b = salaryEachDay
                         a.push(salaryEachDay)
-
                     }
 
                     console.log(b);
@@ -250,42 +258,145 @@ class attendance extends Component {
 
         const date1 = new Date();
         // Sun Dec 17 1995 03:24:00 GMT...
-        
+
         console.log(date1);
         return (
             <div>
                 <div className="content-wrapper">
                     <div className="container-fluid">
                         <div className="row ">
-                            <div className="col-lg-2">
-                                {/* Large Size Modal */}
-                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">You Are Come In ?</button>
-                                {/* Modal */}
-                                <div className="modal fade" id="formemodal" style={{ display: 'none' }} aria-hidden="true">
-                                    <div className="modal-dialog modal-md modal-dialog-centered">
-                                        <div className="modal-content">
-                                            <div className="card">
-                                                <div className="card-header text-uppercase">You Are Come In ?</div>
+                            <div className="col-lg-12">
 
-                                                <div className="card-body">
-                                                    <form onSubmit={this.handleInsertAttendance}>
-                                                        <div className="row">
-                                                            <div className="col-12 col-lg-12 col-xl-12">
+                                {
+                                    dataUser[0].role == 1
+                                        ?
+                                        <>
+                                            <div className="col-lg-12">
+                                                <div className="card">
+                                                    <div className="card-body">
+                                                        <h5 className="card-title">List Account</h5>
+                                                        <div className="table-responsive">
+                                                            <table className="table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="col">Name</th>
+                                                                        <th scope="col">Money</th>
+                                                                        <th scope="col">Shift</th>
+                                                                        <th scope="col">Function</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {this.state.news.map((item, key) =>
+                                                                        <tr key={key}>
+                                                                            <th>{item.name}</th>
+                                                                            <th>{item.money + ' $'}</th>
+                                                                            <th>{item.shift_name}</th>
+
+                                                                            <th>
+                                                                                <button type="button" className="btn btn-light waves-effect waves-light m-1"
+                                                                                    data-toggle="modal" data-target="#formemodalattendance" onClick={() => this.getAllAttendance(item.id_account)}> <i className="fa fa-edit" /></button>
+                                                                            </th>
+                                                                        </tr>)}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="modal fade" id="formemodalattendance" style={{ display: 'none' }} aria-hidden="true">
+                                                <div className="modal-dialog modal-md modal-dialog-centered">
+                                                    <div className="modal-content" style={{ width: "200%"}}>
+                                                        <div className="card-body">
+                                                            <h5 className="card-title">List All attendance of Employee</h5>
+                                                            <br />
+                                                            <ExcelFile element={<button className="btn btn-light px-5">Download Data</button>} >
+                                                                <ExcelSheet data={this.state.attendanceAll} name="Employees">
+                                                                    <ExcelColumn label="Name" value="name" />
+                                                                    <ExcelColumn label="Shift" value="shift_name" />
+                                                                    <ExcelColumn label="Date" value="date" />
+                                                                    <ExcelColumn label="Time In" value="time_in" />
+                                                                    <ExcelColumn label="Time Out" value="time_out" />
+                                                                </ExcelSheet>
+                                                            </ExcelFile>
+
+                                                            <div className="table-responsive">
+                                                                <br />
+                                                                <table className="table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th scope="col">No.</th>
+                                                                            <th scope="col">Name</th>
+                                                                            <th scope="col">Shift</th>
+                                                                            <th scope="col">Date</th>
+                                                                            <th scope="col">Time In</th>
+                                                                            <th scope="col">Time Out</th>
+                                                                            <th scope='col'>Salary(each)</th>
+
+                                                                        </tr>
+                                                                    </thead>
+
+                                                                    <tbody>
+                                                                        {this.state.postData}
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th>Total Salary is</th>
+                                                                        <th>{this.state.totalSalary} $</th>
+
+                                                                    </tbody>
+
+                                                                </table>
+                                                                <ReactPaginate
+                                                                    hideDisabled
+                                                                    previousLabel={<a className="page-link">Previous</a>}
+                                                                    nextLabel={<a className="page-link">Next</a>}
+                                                                    pageCount={this.state.pageCount}
+                                                                    marginPagesDisplayed={2}
+                                                                    pageRangeDisplayed={5}
+                                                                    onPageChange={this.handlePageClick}
+                                                                    containerClassName={"pagination"}
+                                                                    activeClassName={"page-item-active"}
+                                                                    pageClassName={"page-link"}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </>
+                                        :
+                                        <>
+                                            <div className="col-lg-2">
+                                                {/* Large Size Modal */}
+                                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">You Are Come In ?</button>
+                                                {/* Modal */}
+                                                <div className="modal fade" id="formemodal" style={{ display: 'none' }} aria-hidden="true">
+                                                    <div className="modal-dialog modal-md modal-dialog-centered">
+                                                        <div className="modal-content">
+                                                            <div className="card">
+                                                                <div className="card-header text-uppercase">You Are Come In ?</div>
+
+                                                                <div className="card-body">
+                                                                    <form onSubmit={this.handleInsertAttendance}>
+                                                                        <div className="row">
+                                                                            <div className="col-12 col-lg-12 col-xl-12">
 
 
-                                                                {/* <input type="cash" name="name" className="form-control"
+                                                                                {/* <input type="cash" name="name" className="form-control"
                                                                             onChange={this.handleInputChange} /> */}
-                                                                {/* <Select
+                                                                                {/* <Select
                                                                         className="col-sm-10"
                                                                         value={selectedShift}
                                                                         onChange={this.handleChangeShift}
                                                                         options={this.state.listShift}
                                                                     /> */}
-                                                                {
-                                                                    dataUser.map((item, key) =>
-                                                                        <div className="form-group row" key={key}>
-                                                                            <label className="col-sm-12 col-form-label">Name</label>
-                                                                            {/* <div className="col-sm-10">
+                                                                                {
+                                                                                    dataUser.map((item, key) =>
+                                                                                        <div className="form-group row" key={key}>
+                                                                                            <label className="col-sm-12 col-form-label">Name</label>
+                                                                                            {/* <div className="col-sm-10">
                                                                                 <input type="cash" name="name" className="form-control"
                                                                                     onChange={this.handleInputChange} value=
                                                                                     {
@@ -295,16 +406,16 @@ class attendance extends Component {
                                                                                             : ""
                                                                                     } readOnly />
                                                                             </div> */}
-                                                                            <Select
-                                                                                className="col-sm-10"
-                                                                                value={selectedName}
-                                                                                onChange={this.handleChangeName}
-                                                                                options={this.state.listName}
-                                                                                isDisabled={true}
-                                                                            />
+                                                                                            <Select
+                                                                                                className="col-sm-10"
+                                                                                                value={selectedName}
+                                                                                                onChange={this.handleChangeName}
+                                                                                                options={this.state.listName}
+                                                                                                isDisabled={true}
+                                                                                            />
 
-                                                                            <label className="col-sm-12 col-form-label">Shift</label>
-                                                                            {/* <div className="col-sm-10">
+                                                                                            <label className="col-sm-12 col-form-label">Shift</label>
+                                                                                            {/* <div className="col-sm-10">
                                                                                 <input type="cash" name="shift" className="form-control"
                                                                                     onChange={this.handleInputChange} value=
                                                                                     {
@@ -316,107 +427,40 @@ class attendance extends Component {
                                                                                                 : "Toi"
                                                                                     } readOnly />
                                                                             </div> */}
-                                                                            <Select
-                                                                                className="col-sm-10"
-                                                                                value={selectedShift}
-                                                                                onChange={this.handleChangeShift}
-                                                                                options={this.state.listShift}
-                                                                                isDisabled={true}
-                                                                            />
-                                                                        </div>
-                                                                    )
-                                                                }
+                                                                                            <Select
+                                                                                                className="col-sm-10"
+                                                                                                value={selectedShift}
+                                                                                                onChange={this.handleChangeShift}
+                                                                                                options={this.state.listShift}
+                                                                                                isDisabled={true}
+                                                                                            />
+                                                                                        </div>
+                                                                                    )
+                                                                                }
 
 
-                                                                <label className="col-sm-12 col-form-label">Time in</label>
-                                                                <div className="col-sm-10">
-                                                                    <input name="time_in" className="form-control"
-                                                                        onChange={this.handleInputChange} value={new Date().toLocaleTimeString()} readOnly />
+                                                                                <label className="col-sm-12 col-form-label">Time in</label>
+                                                                                <div className="col-sm-10">
+                                                                                    <input name="time_in" className="form-control"
+                                                                                        onChange={this.handleInputChange} value={new Date().toLocaleTimeString()} readOnly />
+                                                                                </div>
+                                                                                <label className="col-sm-12 col-form-label">Today</label>
+                                                                                <div className="col-sm-10">
+                                                                                    <input name="date" className="form-control"
+                                                                                        onChange={this.handleInputChange} value={new Date().toLocaleDateString()} readOnly />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>{/*end row*/}
+                                                                        <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Yes</button>
+                                                                    </form>
                                                                 </div>
-                                                                <label className="col-sm-12 col-form-label">Today</label>
-                                                                <div className="col-sm-10">
-                                                                    <input name="date" className="form-control"
-                                                                        onChange={this.handleInputChange} value={new Date().toLocaleDateString()} readOnly />
-                                                                </div>
+
                                                             </div>
-                                                        </div>{/*end row*/}
-                                                        <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Yes</button>
-                                                    </form>
-                                                </div>
 
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-12">
-
-                                {
-                                    dataUser[0].role == 1
-                                        ?
-                                        <>
-                                            <div className="card">
-                                                <div className="card-body">
-                                                    <h5 className="card-title">List All attendance of Employee</h5>
-                                                    <br />
-                                                    <ExcelFile element={<button className="btn btn-light px-5">Download Data</button>} >
-                                                        <ExcelSheet data={this.state.attendanceAll} name="Employees">
-                                                            <ExcelColumn label="Name" value="name" />
-                                                            <ExcelColumn label="Shift" value="shift_name" />
-                                                            <ExcelColumn label="Date" value="date" />
-                                                            <ExcelColumn label="Time In" value="time_in" />
-                                                            <ExcelColumn label="Time Out" value="time_out" />
-                                                        </ExcelSheet>
-                                                    </ExcelFile>
-
-                                                    <div className="table-responsive">
-                                                        <br />
-                                                        <table className="table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th scope="col">No.</th>
-                                                                    <th scope="col">Name</th>
-                                                                    <th scope="col">Shift</th>
-                                                                    <th scope="col">Date</th>
-                                                                    <th scope="col">Time In</th>
-                                                                    <th scope="col">Time Out</th>
-                                                                    <th scope='col'>Salary(each)</th>
-
-                                                                </tr>
-                                                            </thead>
-
-                                                            <tbody>
-                                                                {this.state.postData}
-                                                                <th></th>
-                                                                <th></th>
-                                                                <th></th>
-                                                                <th></th>
-                                                                <th></th>
-                                                                <th>Total Salary is</th>
-                                                                <th>{this.state.totalSalary} $</th>
-
-                                                            </tbody>
-
-                                                        </table>
-                                                        <ReactPaginate
-                                                            hideDisabled
-                                                            previousLabel={<a className="page-link">Previous</a>}
-                                                            nextLabel={<a className="page-link">Next</a>}
-                                                            pageCount={this.state.pageCount}
-                                                            marginPagesDisplayed={2}
-                                                            pageRangeDisplayed={5}
-                                                            onPageChange={this.handlePageClick}
-                                                            containerClassName={"pagination"}
-                                                            activeClassName={"page-item-active"}
-                                                            pageClassName={"page-link"}
-                                                        />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </>
-                                        :
-                                        <>
                                             <div className="card">
                                                 <div className="card-body">
                                                     <h5 className="card-title">List attendance of Employee</h5>
