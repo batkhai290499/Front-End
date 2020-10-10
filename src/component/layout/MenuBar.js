@@ -59,7 +59,11 @@ class MenuBar extends Component {
                                             <i className="zmdi zmdi-account-circle" /> <span>Mission</span>
                                         </NavLink>
                                     </li>
-
+                                    <li>
+                                        <NavLink to="/resign">
+                                            <i className="zmdi zmdi-lock" /> <span>Resign</span>
+                                        </NavLink>
+                                    </li>
                                 </>
                                 : dataUser[0].role == 3
                                     ?
@@ -77,6 +81,11 @@ class MenuBar extends Component {
                                         <li>
                                             <NavLink to="/mission">
                                                 <i className="zmdi zmdi-account-circle" /> <span>Mission</span>
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/resign">
+                                                <i className="zmdi zmdi-lock" /> <span>Resign</span>
                                             </NavLink>
                                         </li>
                                     </>

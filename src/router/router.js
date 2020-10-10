@@ -16,6 +16,7 @@ import attendance from '../component/action/attendance';
 import chatprocess from '../component/action/chatprocess';
 import producter from '../component/action/producter';
 import mission from '../component/action/mission';
+import resign from '../component/action/resign';
 
 
 class router extends Component {
@@ -38,6 +39,7 @@ class router extends Component {
                             <Route path="/attendance" component={attendance} />
                             <Route path="/chatprocess" component={chatprocess} />
                             <Route path="/mission" component={mission} />
+                            <Route path="/resign" component={resign} />
 
                         </>
                         :
@@ -55,7 +57,7 @@ class router extends Component {
                                     <Route path="/shift" component={shift} />
                                     <Route path="/salary" component={salary} />
                                     <Route path="/mission" component={mission} />
-
+                                    <Route path="/resign" component={resign} />
                                 </>
                                 :
                                 dataUser[0].role == 4 // role 4 is Employee

@@ -5,7 +5,7 @@ import Select from 'react-select';
 import moment from 'moment'
 import ReactExport from "react-data-export";
 import ReactPaginate from 'react-paginate';
-
+import { Doughnut } from "react-chartjs-2";
 
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
@@ -31,7 +31,12 @@ class attendance extends Component {
             currentPage: 0,
             salary: [],
             totalSalary: '',
-            news: []
+            news: [],
+            salaryOT: '',
+            shift: [],
+            resignByLogin: [],
+            totalWork: '',
+            salaryLate: ''
         };
         this.handlePageClick = this
             .handlePageClick
@@ -41,7 +46,34 @@ class attendance extends Component {
         this.getAttendanceById();
         this.getAllUserById()
         this.getUser();
+        this.getResignByLogin()
     };
+    getShiftById = (item) => {
+        Axios.get(`/api/shift/viewById/${item}`)
+            .then(res => {
+                if (res.status === 200) {
+                    const shift = res.data;
+                    this.setState({ shift: shift.shift });
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+
+    getDataResignById = (item) => {
+        Axios.get(`/api/resign/viewsById/${item}`)
+            .then(res => {
+                if (res.status === 200) {
+                    const resignById = res.data;
+                    this.setState({
+                        resignById: resignById.resignById,
+                    })
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+
     getAttendanceById() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
 
@@ -63,12 +95,12 @@ class attendance extends Component {
                 if (res.status === 200) {
                     const news = res.data;
                     this.setState({ news: news.news });
-                    console.log(this.state.news);
                 }
             })
             .catch(error => console.log(error)
             );
     }
+
     getAllAttendance = (item) => {
         Axios.get(`/api/attendance/views/${item}`)
             .then(res => {
@@ -77,27 +109,106 @@ class attendance extends Component {
                     this.setState({
                         attendanceAll: attendanceAll.attendanceAll,
                     })
+                    //luong tinh theo gio
                     var a = []
                     var b = 0
                     var salaryEachDay = 0
                     for (let i = 0; i < this.state.attendanceAll.length; i++) {
                         var element = this.state.attendanceAll[i];
-                        console.log(element);
+                        //console.log(element);
                         var startDate = Date.parse(element.time_in);
                         var endDate = Date.parse(element.time_out);
-
                         var totalTime = Math.floor((endDate - startDate) / (1000 * 60 * 60));
-                        console.log(totalTime);
-
+                        //console.log(totalTime);
                         var salary = element.salary;
-
                         salaryEachDay = b + Math.floor(totalTime * salary)
                         b = salaryEachDay
                         a.push(salaryEachDay)
                     }
+                    // console.log(b);
+                    // LUONG TINH THEO NGAY
+                    var hihi = this.state.attendanceAll
+                    for (let i = 0; i < hihi.length; i++) {
+                        var getdate1 = new Date(hihi[i].date).getDay()
+                        if (getdate1 < 6) {
+                            var firstDay = hihi[0].date
+                            var endDay = hihi[hihi.length - 1].date
+                            var salary = hihi[i].salary
+                            // lay ngay dau di lam va ngay cuoi di lam
+                            var dayWork = (Date.parse(endDay) - Date.parse(firstDay)) / (1000 * 60 * 60 * 24) + 1
+                            //console.log((Date.parse(endDay) - Date.parse(firstDay))/ (1000 * 60 * 60 * 24) + 1);
 
-                    console.log(b);
+                            // lay luong theo 1 ngay`
+                            var daySalary = (salary / 26)
+                            var totalWork = Math.floor(daySalary * dayWork) 
+                            // tinh so luong theo ngay di lam
+                            //console.log(daySalary * dayWork);
+                            //-------------------------------------------------
+                        }
+                    }
+                    //LUONG TINH THOI GIAN Over Time (OT)
+                    var timeOT = []
+                    var salaryOT = 0
+                    var salaryOTEachDay = 0
+                    for (let i = 0; i < hihi.length; i++) {
+                        var getdate1 = new Date(hihi[i].date).getDay()
+                        if (getdate1 == 6) {
+                            var dayOT = hihi[i]
+                            var startOT = Date.parse(dayOT.time_in)
+                            var endOT = Date.parse(dayOT.time_out)
+                            var totalOT = Math.floor((endOT - startOT) / (1000 * 60 * 60))
+                            var salaryofEmployee = dayOT.salary
+                            salaryOTEachDay = salaryOT + (((salaryofEmployee / 26) / 8) * totalOT * (150 / 100))
+                            salaryOT = Math.floor(salaryOTEachDay)
+                            timeOT.push(salaryOTEachDay)
 
+                        }
+                    }
+                    // TINH TIEN DI LAM MUON
+                    var shiftLate = this.state.shift
+                    var hihi = this.state.attendanceAll
+                    var totalLateIn = []
+                    var salaryLate = 0
+                    var salaryLateEach = 0
+
+
+                    for (let z = 0; z < hihi.length; z++) {
+                        var timeInUser = new Date(moment(hihi[z].time_in).format())
+
+                        var plus = moment(hihi[z].time_in).format('YYYY-MM-DD');
+                        for (let i = 0; i < shiftLate.length; i++) {
+                            var timeInLate = new Date(plus + 'T' + shiftLate[i].time_in)
+                            var timeOutLate = shiftLate[i].time_out
+
+                            //Quy dinh di lam muon
+                            var mathTimeLate = (timeInUser - timeInLate) / (1000 * 60)
+                            if (0 < mathTimeLate && mathTimeLate <= 15) {
+                                salaryLateEach = salaryLate + 10
+                                // salaryLate = salaryLateEach
+                                totalLateIn.push(salaryLateEach)
+                            }
+                            if (16 < mathTimeLate && mathTimeLate <= 30) {
+                                salaryLateEach = salaryLate + 25
+                                // salaryLate = salaryLateEach
+                                totalLateIn.push(salaryLateEach)
+                            }
+                            if (31 < mathTimeLate && mathTimeLate <= 60) {
+                                salaryLateEach = salaryLate + 60
+                                // salaryLate = salaryLateEach
+                                totalLateIn.push(salaryLateEach)
+                            }
+                            if (mathTimeLate > 60) {
+                                salaryLateEach = salaryLate + Math.floor(((salaryofEmployee / 26) / 2))
+                                // salaryLate = salaryLateEach
+                                totalLateIn.push(salaryLateEach)
+                            }
+                            salaryLate = salaryLateEach
+
+                        }
+
+
+                    }
+                    var totalOfSalary = Math.floor((totalWork) + (salaryOT) - (salaryLate))
 
                     const slice = this.state.attendanceAll.slice(this.state.offset,
                         this.state.offset + this.state.perPage)
@@ -107,7 +218,6 @@ class attendance extends Component {
                                 <th>{key + 1}</th>
                                 <th>{item.name}</th>
                                 <th>{item.salary}</th>
-                                <th>{moment(item.date).format("L")}</th>
                                 <th>{moment(item.time_in).format("HH:mm")}</th>
                                 <th>{
                                     moment(item.time_out).format("HH:mm") == "Invalid date"
@@ -116,16 +226,22 @@ class attendance extends Component {
                                         :
                                         moment(item.time_out).format("HH:mm")
                                 }</th>
-                                <th>
+                                {/* <th>
                                     {Math.floor(Math.floor((Date.parse(item.time_out) - Date.parse(item.time_in)) / (1000 * 60 * 60)) * item.salary)} $
-                                </th>
+                                </th> */}
                             </tr>
                         </React.Fragment>)
                     this.setState({
                         pageCount: Math.ceil(this.state.attendanceAll.length / this.state.perPage),
                         postData,
-                        totalSalary: b
+                        totalSalary: totalOfSalary,
+                        salaryOT: salaryOT,
+                        totalWork: totalWork,
+                        salaryLate: salaryLate
                     })
+                    console.log(this.state.totalSalary);
+                    console.log(this.state.salaryOT);
+                    console.log(this.state.salaryLate);
                 }
             })
             .catch(error => console.log(error)
@@ -183,30 +299,59 @@ class attendance extends Component {
     handleChangeName = (selectedName) => {
         this.setState({ selectedName });
     }
+
+    getResignByLogin() {
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+        Axios.get(`/api/resign/viewsById/${dataUser[0].id}`)
+            .then(res => {
+                if (res.status === 200) {
+                    const resignByLogin = res.data;
+                    this.setState({
+                        resignByLogin: resignByLogin.resignById,
+                    })
+
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
     handleInsertAttendance = (event) => {
         event.preventDefault();
+        for (let z = 0; z < this.state.resignByLogin.length; z++) {
+            var checkDate = moment(this.state.resignByLogin[z].date).format('YYYY-MM-DD')
+            var checkStatusResign = this.state.resignByLogin[z].status
+            console.log(checkStatusResign);
+        }
+        if (checkStatusResign == 1) {
+            if (moment().format('YYYY-MM-DD') == checkDate) {
+                swal("Yeahh! You have been off today", {
+                    icon: "warning",
+                });
+            } else {
+                var dataUser = JSON.parse(localStorage.getItem('userInfo'))
 
-        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
-        const date1 = new Date();
+                const newAttendance = {
+                    //id_department: '',
 
-        const newAttendance = {
-            //id_department: '',
+                    id_account: dataUser[0].id,
+                    id_shift: dataUser[0].shift,
+                    date: moment(new Date().toLocaleDateString()).format('YYYY/MM/DD'),
+                    time_in: moment().format('YYYY-MM-DD h:mm:ss'),
+                };
+                console.log(newAttendance);
 
-            id_account: dataUser[0].id,
-            id_shift: dataUser[0].shift,
-            date: moment(new Date().toLocaleDateString()).format('YYYY/MM/DD'),
-            time_in: date1,
-        };
-        console.log(newAttendance);
+                Axios.post('/api/attendance/insert', newAttendance)
+                    .then(res => {
+                        let attendance = this.state.attendance;
+                        attendance = [newAttendance, ...attendance];
+                        this.setState({ attendance: attendance });
+                    })
+                    .catch(error => console.log(error));
+                this.componentDidMount()
+            }
+        }
 
-        Axios.post('/api/attendance/insert', newAttendance)
-            .then(res => {
-                let attendance = this.state.attendance;
-                attendance = [newAttendance, ...attendance];
-                this.setState({ attendance: attendance });
-            })
-            .catch(error => console.log(error));
-        this.componentDidMount()
+
     };
 
     getDataAttendance = (item) => {
@@ -219,7 +364,7 @@ class attendance extends Component {
         event.preventDefault();
         const newEditPosition = {
             id_attendance: this.state.id_attendance,
-            time_out: new Date(),
+            time_out: moment().format('YYYY-MM-DD h:mm:ss'),
         };
 
         Axios.post('/api/attendance/edit', newEditPosition)
@@ -255,18 +400,13 @@ class attendance extends Component {
         // console.log(this.state.shift_name);
         const { selectedShift } = this.state;
         const { selectedName } = this.state;
-
-        const date1 = new Date();
-        // Sun Dec 17 1995 03:24:00 GMT...
-
-        console.log(date1);
+        console.log();
         return (
             <div>
                 <div className="content-wrapper">
                     <div className="container-fluid">
                         <div className="row ">
                             <div className="col-lg-12">
-
                                 {
                                     dataUser[0].role == 1
                                         ?
@@ -294,7 +434,10 @@ class attendance extends Component {
 
                                                                             <th>
                                                                                 <button type="button" className="btn btn-light waves-effect waves-light m-1"
-                                                                                    data-toggle="modal" data-target="#formemodalattendance" onClick={() => this.getAllAttendance(item.id_account)}> <i className="fa fa-edit" /></button>
+                                                                                    data-toggle="modal" data-target="#formemodalattendance"
+                                                                                    onClick={() => this.getShiftById(item.id_account)
+                                                                                        || this.getDataResignById(item.id_account)
+                                                                                        || this.getAllAttendance(item.id_account)}> <i className="fa fa-edit" /></button>
                                                                             </th>
                                                                         </tr>)}
                                                                 </tbody>
@@ -303,64 +446,98 @@ class attendance extends Component {
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div className="modal fade" id="formemodalattendance" style={{ display: 'none' }} aria-hidden="true">
-                                                <div className="modal-dialog modal-md modal-dialog-centered">
-                                                    <div className="modal-content" style={{ width: "200%"}}>
+                                                <div className="modal-dialog modal-lg modal-dialog-centered">
+                                                    <div className="modal-content">
                                                         <div className="card-body">
-                                                            <h5 className="card-title">List All attendance of Employee</h5>
-                                                            <br />
-                                                            <ExcelFile element={<button className="btn btn-light px-5">Download Data</button>} >
-                                                                <ExcelSheet data={this.state.attendanceAll} name="Employees">
-                                                                    <ExcelColumn label="Name" value="name" />
-                                                                    <ExcelColumn label="Shift" value="shift_name" />
-                                                                    <ExcelColumn label="Date" value="date" />
-                                                                    <ExcelColumn label="Time In" value="time_in" />
-                                                                    <ExcelColumn label="Time Out" value="time_out" />
-                                                                </ExcelSheet>
-                                                            </ExcelFile>
+                                                            <div className="row">
+                                                                <div className="col-lg-12">
+                                                                    <Doughnut
+                                                                        data={{
+                                                                            labels: [
+                                                                                "Salary Work",
+                                                                                "Salary Over Time",
+                                                                                "Salary Late",
 
-                                                            <div className="table-responsive">
-                                                                <br />
-                                                                <table className="table">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th scope="col">No.</th>
-                                                                            <th scope="col">Name</th>
-                                                                            <th scope="col">Shift</th>
-                                                                            <th scope="col">Date</th>
-                                                                            <th scope="col">Time In</th>
-                                                                            <th scope="col">Time Out</th>
-                                                                            <th scope='col'>Salary(each)</th>
+                                                                            ],
+                                                                            datasets: [
+                                                                                {
+                                                                                    label: "Population (millions)",
+                                                                                    backgroundColor: [
+                                                                                        "#3e95cd",
+                                                                                        "#8e5ea2",
+                                                                                        "#3cba9f",
 
-                                                                        </tr>
-                                                                    </thead>
+                                                                                    ],
+                                                                                    data: [this.state.totalWork, this.state.salaryOT, this.state.salaryLate]
+                                                                                }
+                                                                            ]
+                                                                        }}
+                                                                        option={{
+                                                                            title: {
+                                                                                display: true,
+                                                                                text: "Predicted world population (millions) in 2050"
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                                <div className="col-lg-12">
+                                                                    <h5 className="card-title">List All attendance of Employee</h5>
+                                                                    <br />
+                                                                    <ExcelFile element={<button className="btn btn-light px-5">Download Data</button>} >
+                                                                        <ExcelSheet data={this.state.attendanceAll} name="Employees">
+                                                                            <ExcelColumn label="Name" value="name" />
+                                                                            <ExcelColumn label="Shift" value="shift_name" />
+                                                                            <ExcelColumn label="Date" value="date" />
+                                                                            <ExcelColumn label="Time In" value="time_in" />
+                                                                            <ExcelColumn label="Time Out" value="time_out" />
+                                                                        </ExcelSheet>
+                                                                    </ExcelFile>
 
-                                                                    <tbody>
-                                                                        {this.state.postData}
-                                                                        <th></th>
-                                                                        <th></th>
-                                                                        <th></th>
-                                                                        <th></th>
-                                                                        <th></th>
-                                                                        <th>Total Salary is</th>
-                                                                        <th>{this.state.totalSalary} $</th>
+                                                                    <div className="table-responsive">
 
-                                                                    </tbody>
+                                                                        <br />
+                                                                        <table className="table">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th scope="col">No.</th>
+                                                                                    <th scope="col">Name</th>
+                                                                                    <th scope="col">Money</th>
+                                                                                    <th scope="col">Time In</th>
+                                                                                    <th scope="col">Time Out</th>
+                                                                                    {/* <th scope='col'>Salary(each)</th> */}
+                                                                                </tr>
+                                                                            </thead>
 
-                                                                </table>
-                                                                <ReactPaginate
-                                                                    hideDisabled
-                                                                    previousLabel={<a className="page-link">Previous</a>}
-                                                                    nextLabel={<a className="page-link">Next</a>}
-                                                                    pageCount={this.state.pageCount}
-                                                                    marginPagesDisplayed={2}
-                                                                    pageRangeDisplayed={5}
-                                                                    onPageChange={this.handlePageClick}
-                                                                    containerClassName={"pagination"}
-                                                                    activeClassName={"page-item-active"}
-                                                                    pageClassName={"page-link"}
-                                                                />
+                                                                            <tbody>
+                                                                                {this.state.postData}
+                                                                                <th></th>
+                                                                                <th></th>
+                                                                                <th></th>
+                                                                                <th>Total Salary is</th>
+                                                                                <th>{this.state.totalSalary} $</th>
+
+                                                                            </tbody>
+
+                                                                        </table>
+                                                                        <ReactPaginate
+                                                                            hideDisabled
+                                                                            previousLabel={<a className="page-link">Previous</a>}
+                                                                            nextLabel={<a className="page-link">Next</a>}
+                                                                            pageCount={this.state.pageCount}
+                                                                            marginPagesDisplayed={2}
+                                                                            pageRangeDisplayed={5}
+                                                                            onPageChange={this.handlePageClick}
+                                                                            containerClassName={"pagination"}
+                                                                            activeClassName={"page-item-active"}
+                                                                            pageClassName={"page-link"}
+                                                                        />
+                                                                    </div>
+                                                                </div>
                                                             </div>
+
+
                                                         </div>
                                                     </div>
                                                 </div>
