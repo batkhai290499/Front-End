@@ -92,16 +92,14 @@ class resign extends Component {
             .catch(error => console.log(error));
     };
 
-    handleChangeIdResign(item) {
+   
+
+    handleEditrResign = (item) => {
         this.setState({
             id_resign1: item
         })
-    }
-
-    handleEditrResign = () => {
-
         const newEditrResign = {
-            id_resign: this.state.id_resign1,
+            id_resign: item,
             status: 1,
         };
 
@@ -114,6 +112,14 @@ class resign extends Component {
                             ...elm,
                             status: 1
                         } : elm
+
+                    ),
+                    resign: prevState.resign.map(
+                        elm => elm.id_resign === key ? {
+                            ...elm,
+                            status: 1
+                        } : elm
+                        
                     )
                 }))
                 console.log(key);
@@ -302,7 +308,7 @@ class resign extends Component {
                                                                         <button type="button" className="btn btn-light waves-effect waves-light m-1"
                                                                             data-toggle="modal"
                                                                             //data-target="#formemodalResign"
-                                                                            onClick={() => this.handleChangeIdResign(item.id_resign) || this.handleEditrResign()}> <i className="fa fa-edit" /></button>
+                                                                            onClick={() =>this.handleEditrResign(item.id_resign)}> <i className="fa fa-edit" /></button>
                                                                 </th>
                                                             </tr>)}
                                                     </tbody>

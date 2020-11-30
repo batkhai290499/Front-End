@@ -63,13 +63,13 @@ class router extends Component {
                                 dataUser[0].role == 4 // role 4 is Employee
                                     ?
                                     <>
-                                        {console.log("Maintain cmnl đi !")}
+                                        {console.log("Maintain")}
                                     </>
                                     :
                                     dataUser[0].role == 5
                                         ?
                                         <>
-                                            {console.log("Maintain cmnl đi !")}
+                                            {console.log("Maintain")}
                                         </>
                                         : ""
                 }
