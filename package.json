@@ -28,7 +28,7 @@
     "react-select": "^3.1.0",
     "socket.io-client": "^2.3.0",
     "sweetalert": "^2.1.2",
-    "xlsx": "^0.16.3"
+    "xlsx": "^0.17.0"
   },
   "scripts": {
     "start": "react-scripts start",
