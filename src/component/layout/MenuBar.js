@@ -9,7 +9,7 @@ class MenuBar extends Component {
                 <div id="sidebar-wrapper" data-simplebar data-simplebar-auto-hide="true">
                     <div className="brand-logo">
                         <a href="index.html">
-                            <img src="assets/images/logo-icon.png" className="logo-icon" alt="logo icon" />
+                            <img src="quyettien.png" className="logo-icon" alt="logo icon" />
                             <h5 className="logo-text">Chill University</h5>
                         </a>
                     </div>
@@ -21,20 +21,20 @@ class MenuBar extends Component {
                                 <>
                                     <li>
                                         <NavLink to="/bend">
-                                            <i className="zmdi zmdi-view-dashboard" /> <span>Account</span>
+                                            <i className="zmdi zmdi-view-dashboard" /> <span>Danh sách tài khoản</span>
                                         </NavLink>
                                     </li>
                                     <li>
                                         <NavLink to="/department">
-                                            <i className="zmdi zmdi-invert-colors" /> <span>Department</span>
+                                            <i className="zmdi zmdi-invert-colors" /> <span>Danh sách lớp</span>
                                         </NavLink>
                                     </li>
                                     <li>
                                         <NavLink to="/position">
-                                            <i className="zmdi zmdi-format-list-bulleted" /> <span>Position</span>
+                                            <i className="zmdi zmdi-format-list-bulleted" /> <span>Thời khóa biểu</span>
                                         </NavLink>
                                     </li>
-                                    <li>
+                                    {/* <li>
                                         <NavLink to="/salary">
                                             <i className="zmdi zmdi-grid" /> <span>Salary</span>
                                         </NavLink>
@@ -43,37 +43,37 @@ class MenuBar extends Component {
                                         <NavLink to="/shift">
                                             <i className="zmdi zmdi-calendar" /> <span>Shift</span>
                                         </NavLink>
-                                    </li>
+                                    </li>*/}
                                     <li>
                                         <NavLink to="/attendance">
-                                            <i className="zmdi zmdi-face" /> <span>Attendance</span>
+                                            <i className="zmdi zmdi-face" /> <span>Danh sách điểm danh</span>
                                         </NavLink>
-                                    </li>
+                                    </li> 
                                     <li>
                                         <NavLink to="/chatprocess">
-                                            <i className="zmdi zmdi-lock" /> <span>Chat</span>
+                                            <i className="zmdi zmdi-lock" /> <span>Tin nhắn</span>
                                         </NavLink>
                                     </li>
-                                    <li>
+                                    {/* <li>
                                         <NavLink to="/mission">
-                                            <i className="zmdi zmdi-account-circle" /> <span>Mission</span>
+                                            <i className="zmdi zmdi-account-circle" />Missions<span></span>
                                         </NavLink>
-                                    </li>
+                                    </li> */}
                                     <li>
                                         <NavLink to="/resign">
-                                            <i className="zmdi zmdi-lock" /> <span>Resign</span>
+                                            <i className="zmdi zmdi-lock" /> <span>Tin tức</span>
                                         </NavLink>
                                     </li>
                                 </>
-                                : dataUser[0].role == 3
+                                : dataUser[0].role == 2
                                     ?
                                     <>
                                         <li>
                                             <NavLink to="/attendance">
-                                                <i className="zmdi zmdi-face" /> <span>Attendance</span>
+                                                <i className="zmdi zmdi-face" /> <span>Thời khóa biểu</span>
                                             </NavLink>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <NavLink to="/chatprocess">
                                                 <i className="zmdi zmdi-lock" /> <span>Chat</span>
                                             </NavLink>
@@ -87,9 +87,32 @@ class MenuBar extends Component {
                                             <NavLink to="/resign">
                                                 <i className="zmdi zmdi-lock" /> <span>Resign</span>
                                             </NavLink>
-                                        </li>
+                                        </li> */}
                                     </>
-                                    : ""
+                                    : dataUser[0].role == 3 ?
+                                         <>
+                                        <li>
+                                            <NavLink to="/attendance">
+                                                <i className="zmdi zmdi-face" /> <span>Attendance</span>
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/chatprocess">
+                                                <i className="zmdi zmdi-lock" /> <span>Chat</span>
+                                            </NavLink>
+                                        </li>
+                                        {/* <li>
+                                            <NavLink to="/mission">
+                                                <i className="zmdi zmdi-account-circle" /> <span>Mission</span>
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink to="/resign">
+                                                <i className="zmdi zmdi-lock" /> <span>Resign</span>
+                                            </NavLink>
+                                        </li> */}
+                                    </>
+                                        :""
                         }
 
                         {/*

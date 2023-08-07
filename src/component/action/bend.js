@@ -166,10 +166,6 @@ class Bend extends Component {
             .then(res => {
                 if (res.status === 200) {
                     const listById = res.data[0];
-                    // var dep = this.state.listDepartment.filter((value) => {
-                    //     console.log(value.value)
-                    //     return  value.value == listById.id_department
-                    // })
                     this.setState({
                         listById: listById.listById,
                         id_account: listById.id_account,
@@ -222,7 +218,6 @@ class Bend extends Component {
 
     handleInsertUser = (event) => {
         event.preventDefault();
-
         const newUser = {
             username: this.state.username,
             password: this.state.password,
@@ -253,8 +248,6 @@ class Bend extends Component {
     }
 
     getDataAccount = (item) => {
-        console.log(item);
-
         this.setState({
             id_account: item.id_account,
             username: item.username,
@@ -324,11 +317,7 @@ class Bend extends Component {
     }
 
     deleteUser = (item) => {
-
         const accountId = { id_account: item.id_account };
-        //console.log(accountId);
-
-        //console.log(newsId);
         axios.post('/api/account/delete', accountId)
 
             .then(res => {
@@ -357,20 +346,20 @@ class Bend extends Component {
                         <div className="row">
                             <div className="col-lg-2">
                                 {/* Large Size Modal */}
-                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">Create Account</button>
+                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">Tạo tài khoản</button>
                                 {/* Modal */}
                                 <div className="modal fade" id="formemodal" style={{ display: 'none' }} aria-hidden="true">
                                     <div className="modal-dialog modal-xl modal-dialog-centered">
                                         <div className="modal-content">
                                             <div className="card">
-                                                <div className="card-header text-uppercase">Create Account</div>
+                                                <div className="card-header text-uppercase">Tạo tài khoản</div>
 
                                                 <div className="card-body">
                                                     <form onSubmit={this.handleInsertUser}>
                                                         <div className="row">
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-3 col-form-label">Username</label>
+                                                                    <label className="col-sm-3 col-form-label">Tên tài khoản</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="text" name="username" className="form-control" placeholder="Jhon Deo" onChange={this.handleInputChange} />
                                                                     </div>
@@ -378,7 +367,7 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-3 col-form-label">Password</label>
+                                                                    <label className="col-sm-3 col-form-label">Mật khẩu</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="password" className="form-control" placeholder="Password" name="password" onChange={this.handleInputChange} />
                                                                     </div>
@@ -386,7 +375,7 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-3 col-form-label">Name</label>
+                                                                    <label className="col-sm-3 col-form-label">Họ và tên</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="text" className="form-control" placeholder="Your full name" name="name" onChange={this.handleInputChange} />
                                                                     </div>
@@ -394,7 +383,7 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-3 col-form-label">Age</label>
+                                                                    <label className="col-sm-3 col-form-label">Tuổi</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="number" className="form-control" placeholder="Your age" name="age" onChange={this.handleInputChange} />
                                                                     </div>
@@ -402,7 +391,7 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-3 col-form-label">Address</label>
+                                                                    <label className="col-sm-3 col-form-label">Địa chỉ</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="text" className="form-control" placeholder="Your address" name="address" onChange={this.handleInputChange} />
                                                                     </div>
@@ -410,14 +399,14 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-3 col-form-label">Phone</label>
+                                                                    <label className="col-sm-3 col-form-label">Số điện thoại</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="text" className="form-control" placeholder="Your number phone" name="phone" onChange={this.handleInputChange} />
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Department</label>
+                                                                <label className="col-sm-3 col-form-label">Phòng ban</label>
                                                                 <Select
                                                                     value={selectedDepartment}
                                                                     onChange={this.handleChangeDepartment}
@@ -425,7 +414,7 @@ class Bend extends Component {
                                                                 />
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Position</label>
+                                                                <label className="col-sm-3 col-form-label">Vị trí</label>
                                                                 <Select
                                                                     value={selectedPosition}
                                                                     onChange={this.handleChangePosition}
@@ -433,7 +422,7 @@ class Bend extends Component {
                                                                 />
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Shift</label>
+                                                                <label className="col-sm-3 col-form-label">Ca làm việc</label>
                                                                 <Select
                                                                     value={selectedShift}
                                                                     onChange={this.handleChangeShift}
@@ -442,7 +431,7 @@ class Bend extends Component {
                                                             </div>
 
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Salary</label>
+                                                                <label className="col-sm-3 col-form-label">Lương</label>
                                                                 <Select
                                                                     value={selectedSalary}
                                                                     onChange={this.handleChangeSalary}
@@ -450,7 +439,7 @@ class Bend extends Component {
                                                                 />
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-3 col-form-label">Role</label>
+                                                                <label className="col-sm-3 col-form-label">Vị trí</label>
                                                                 <Select
                                                                     value={selectedRole}
                                                                     onChange={this.handleChangeRole}
@@ -458,10 +447,10 @@ class Bend extends Component {
                                                                 />
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Submit</button>
+                                                                <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Xác nhận</button>
                                                             </div>
 
-                                                        </div>{/*end row*/}
+                                                        </div>
                                                     </form>
                                                 </div>
                                             </div>
@@ -474,23 +463,20 @@ class Bend extends Component {
                             <div className="col-lg-12">
                                 <div className="card">
                                     <div className="card-body">
-                                        <h5 className="card-title">List Account</h5>
+                                        <h5 className="card-title">Danh sách tài khoản</h5>
                                         <div className="table-responsive">
                                             <table className="table">
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col">Username</th>
-                                                        <th scope="col">Password</th>
-                                                        <th scope="col">Name</th>
-                                                        <th scope="col">Age</th>
-                                                        <th scope="col">Address</th>
-                                                        <th scope="col">Phone</th>
-                                                        <th scope="col">Department</th>
-                                                        <th scope="col">Salary</th>
-                                                        <th scope="col">Shift</th>
-                                                        <th scope="col">Position</th>
-                                                        <th scope="col">Role</th>
-                                                        <th scope="col">Function</th>
+                                                        <th scope="col">Tên tài khoản</th>
+                                                        <th scope="col">Mật khẩu</th>
+                                                        <th scope="col">Họ và tên</th>
+                                                        <th scope="col">Tuổi</th>
+                                                        <th scope="col">Địa chỉ</th>
+                                                        <th scope="col">Số điện thoại</th>
+                                                        {/* <th scope="col">Phòng ban</th> */}
+                                                        <th scope="col">Vai trò</th>
+                                                        <th scope="col">Chức năng</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -502,10 +488,7 @@ class Bend extends Component {
                                                             <th>{item.age}</th>
                                                             <th>{item.address}</th>
                                                             <th>{item.phone}</th>
-                                                            <th>{item.department_name}</th>
-                                                            <th>{item.money + ' $'}</th>
-                                                            <th>{item.shift_name}</th>
-                                                            <th>{item.position_name}</th>
+                                                            {/* <th>{item.department_name}</th> */}
                                                             <th>{item.role_name}</th>
 
                                                             <th>
@@ -518,22 +501,21 @@ class Bend extends Component {
                                                                     <div className="modal-dialog modal-dialog-centered">
                                                                         <div className="modal-content animated bounceIn">
                                                                             <div className="modal-header">
-                                                                                <h5 className="modal-title">Alert</h5>
+                                                                                <h5 className="modal-title">Cảnh báo</h5>
                                                                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                                                                     <span aria-hidden="true">×</span>
                                                                                 </button>
                                                                             </div>
                                                                             <div className="modal-body">
-                                                                                <p>Do you want delete {this.state.name}</p>
+                                                                                <p>Bạn có muốn xóa tài khoản {this.state.name}</p>
                                                                             </div>
                                                                             <div className="modal-footer">
-                                                                                <button type="button" className="btn btn-light" data-dismiss="modal"><i className="fa fa-times" /> No</button>
-                                                                                <button type="button" className="btn btn-white" data-dismiss="modal" onClick={() => this.deleteUser(item)}><i className="fa fa-square" /> Yes</button>
+                                                                                <button type="button" className="btn btn-light" data-dismiss="modal"><i className="fa fa-times" /> Không</button>
+                                                                                <button type="button" className="btn btn-white" data-dismiss="modal" onClick={() => this.deleteUser(item)}><i className="fa fa-square" /> Có</button>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-
                                                             </th>
                                                         </tr>)}
                                                 </tbody>
@@ -545,13 +527,13 @@ class Bend extends Component {
                                     <div className="modal-dialog modal-md modal-dialog-centered">
                                         <div className="modal-content">
                                             <div className="card">
-                                                <div className="card-header text-uppercase">Edit Account</div>
+                                                <div className="card-header text-uppercase">Sửa tài khoản</div>
                                                 <div className="card-body">
                                                     <form >
                                                         <div className="row">
                                                             <div className="col-12 col-lg-12 col-xl-12">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Username</label>
+                                                                    <label className="col-sm-12 col-form-label">Tên tài khoản</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="text" name="username" className="form-control"
                                                                             value={this.state.username} onChange={this.handleInputChange} />
@@ -560,7 +542,7 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Password</label>
+                                                                    <label className="col-sm-12 col-form-label">Mật khẩu</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="password" className="form-control"
                                                                             value={this.state.password} name="password" onChange={this.handleInputChange} />
@@ -569,7 +551,7 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Name</label>
+                                                                    <label className="col-sm-12 col-form-label">Họ và tên</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="text" className="form-control"
                                                                             value={this.state.name} name="name" onChange={this.handleInputChange} />
@@ -578,7 +560,7 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Age</label>
+                                                                    <label className="col-sm-12 col-form-label">Tuổi</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="number" className="form-control"
                                                                             value={this.state.age} name="age" onChange={this.handleInputChange} />
@@ -587,7 +569,7 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Address</label>
+                                                                    <label className="col-sm-12 col-form-label">Địa chỉ</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="text" className="form-control"
                                                                             value={this.state.address} name="address" onChange={this.handleInputChange} />
@@ -596,7 +578,7 @@ class Bend extends Component {
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
                                                                 <div className="form-group row">
-                                                                    <label className="col-sm-12 col-form-label">Phone</label>
+                                                                    <label className="col-sm-12 col-form-label">Số điện thoại</label>
                                                                     <div className="col-sm-10">
                                                                         <input type="text" className="form-control"
                                                                             value={this.state.phone} name="phone" onChange={this.handleInputChange} />
@@ -604,7 +586,7 @@ class Bend extends Component {
                                                                 </div>
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-12 col-form-label">Department</label>
+                                                                <label className="col-sm-12 col-form-label">Phòng ban</label>
                                                                 <Select
                                                                     value={selectedDepartment}
                                                                     onChange={this.handleChangeDepartment}
@@ -613,7 +595,7 @@ class Bend extends Component {
                                                                 />
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-12 col-form-label">Position</label>
+                                                                <label className="col-sm-12 col-form-label">Vị trí</label>
                                                                 <Select
                                                                     value={selectedPosition}
                                                                     onChange={this.handleChangePosition}
@@ -622,7 +604,7 @@ class Bend extends Component {
                                                                 />
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-12 col-form-label">Shift</label>
+                                                                <label className="col-sm-12 col-form-label">Ca làm việc</label>
                                                                 <Select
                                                                     value={selectedShift}
                                                                     onChange={this.handleChangeShift}
@@ -632,7 +614,7 @@ class Bend extends Component {
                                                             </div>
 
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-12 col-form-label">Salary</label>
+                                                                <label className="col-sm-12 col-form-label">Lương</label>
                                                                 <Select
                                                                     value={selectedSalary}
                                                                     onChange={this.handleChangeSalary}
@@ -641,7 +623,7 @@ class Bend extends Component {
                                                                 />
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <label className="col-sm-12 col-form-label">Role</label>
+                                                                <label className="col-sm-12 col-form-label">Vai trò</label>
                                                                 <Select
                                                                     value={selectedRole}
                                                                     onChange={this.handleChangeRole}
@@ -650,7 +632,7 @@ class Bend extends Component {
                                                                 />
                                                             </div>
                                                             <div className="col-12 col-lg-6 col-xl-6">
-                                                                <button type="submit" className="btn btn-light px-5" onClick={this.handleEditUser}><i className="icon-lock" />Submit</button>
+                                                                <button type="submit" className="btn btn-light px-5" onClick={this.handleEditUser}><i className="icon-lock" />Xác nhận</button>
                                                             </div>
 
                                                         </div>{/*end row*/}

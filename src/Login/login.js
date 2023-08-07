@@ -11,44 +11,9 @@ class login extends Component {
         this.password = '';
         localStorage.clear();
     }
-    // componentDidMount() {
-    //     axios.get('/api/news')
-    //       .then(res => {
-
-    //         if (res.status === 200) {
-    //           const news = res.data;
-    //           this.setState({ news: news.news });
-    //         }
-    //       })
-    //       .catch(error => console.log(error));
-    //   };
-
-    // CheckLogin = async (e) => {
-
-    //     let result = await fetch('http://localhost:4000/api/news', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({
-    //             username: this.username,
-    //             password: this.password
-    //         })
-    //     });
-    //     let data = await result.json();
-    //     if (data.status !== 10000) {
-    //         this.setState({ 'error': 1 })
-    //         return;
-    //     }
-    //     else {
-    //         localStorage.setItem("isLogin", 'true');
-    //         this.props.history.push('/');
-    //     }
-    // }
 
     CheckLogin = async (e) => {
-        let results = await Axios.post('/api/account/login', {
+        let results = await Axios.post('http://localhost:4000/api/account/login', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -59,20 +24,12 @@ class login extends Component {
                 password: this.password
             }
         });
-        //console.log(results);
-
-        // if ( results.length() !== 0){
-        //     localStorage.setItem("isLogin", 'true');
-        //     this.props.history.push('/');
-        // } else {
-        //     this.setState({ 'error': 1 })
-        //     return;
-        // }
 
         if (results.status !== 200) {
             this.setState({ 'error': 1 })
             return;
         }
+        
         else {
             if (results.data.news.length > 0) {
                 localStorage.setItem("isLogin", 'true');

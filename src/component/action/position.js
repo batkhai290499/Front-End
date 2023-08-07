@@ -62,7 +62,6 @@ class position extends Component {
         this.setState({
             [name]: value
         });
-        //console.log(this.state.name);
 
     };
 
@@ -251,7 +250,6 @@ class position extends Component {
                                                                     </div>
                                                                 </div>
                                                             </th>
-                                                            {/* onClick={() => this.deletePosition(item)} */}
                                                         </tr>)}
                                                 </tbody>
                                             </table>

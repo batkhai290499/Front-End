@@ -34,9 +34,14 @@ class attendance extends Component {
             news: [],
             salaryOT: '',
             shift: [],
+            schedule: [],
             resignByLogin: [],
             totalWork: '',
-            salaryLate: ''
+            salaryLate: '',
+            listStudent: [],
+            checked: [],
+            listSchedule: [],
+            student_late: []
         };
         this.handlePageClick = this
             .handlePageClick
@@ -46,8 +51,47 @@ class attendance extends Component {
         this.getAttendanceById();
         this.getAllUserById()
         this.getUser();
-        this.getResignByLogin()
+        this.getResignByLogin();
+        this.getSubjectById()
+        this.getAllSubject()
+        this.getStudentLateById()
     };
+    getAllSubject = () => {
+         Axios.get(`/api/subject/attendance`)
+            .then(res => {
+                if (res.status === 200) {
+                    const shift = res;
+                    console.log(res);
+                    this.setState({ listSchedule: shift.data.subject });
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+    getSubjectById = () => {
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+        Axios.get(`/api/subject/views/${dataUser[0].id}`)
+            .then(res => {
+                if (res.status === 200) {
+                    const shift = res;
+                    this.setState({ schedule: shift.data.subject });
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+    getStudentLateById = () => {
+        var dataUser = JSON.parse(localStorage.getItem('userInfo'))
+        Axios.get(`/api/student_late/${dataUser[0].id}`)
+            .then(res => {
+                if (res.status === 200) {
+                    const shift = res;
+                    this.setState({ student_late: shift.data.subject });
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
     getShiftById = (item) => {
         Axios.get(`/api/shift/viewById/${item}`)
             .then(res => {
@@ -315,6 +359,19 @@ class attendance extends Component {
             .catch(error => console.log(error)
             );
     }
+    handleInsertStudentLate = (event) => {
+        event.preventDefault();
+        Axios.post('/api/subject/student_late', this.state.checked)
+            .then(res => {
+                console.log(res);
+                swal("Danh sách học sinh đi muộn đã được nộp", {
+                    icon: "success",
+                });
+                this.modalClose()
+            })
+            .catch(error => console.log(error));
+
+    }
     handleInsertAttendance = (event) => {
         event.preventDefault();
         for (let z = 0; z < this.state.resignByLogin.length; z++) {
@@ -350,8 +407,6 @@ class attendance extends Component {
                 this.componentDidMount()
             }
         }
-
-
     };
 
     getDataAttendance = (item) => {
@@ -391,16 +446,36 @@ class attendance extends Component {
     modalClose = () => {
         this.componentDidMount();
     }
+    getListAccount = (item) => {
+        console.log(item.id_schedule);
+         Axios.get(`/api/subject/attendance`)
+            .then(res => {
+                if (res.status === 200) {
+                    console.log(res);
+                    const listStudent = res.data;
+                    this.setState({
+                        listStudent: listStudent.subject,
+                    })
+                }
+            })
+            .catch(error => console.log(error)
+            );
+    }
+    handleCheck = (event, item) => {
+    var updatedList = [...this.state.checked];
+    if (!event.target.checked) {
+        updatedList.splice(this.state.checked.indexOf(event.target.value), 1);
+    } else {
+        updatedList = [...this.state.checked, event.target.value];
+    }
+    this.setState({
+       checked: updatedList
+    });
+    };
 
     render() {
         var dataUser = JSON.parse(localStorage.getItem('userInfo'))
-        // this.state.shift.map((item,key) => {
-        //     this.state.shift_name = item.shift_name
-        // })
-        // console.log(this.state.shift_name);
-        const { selectedShift } = this.state;
-        const { selectedName } = this.state;
-        console.log();
+        console.log(this.state.student_late,dataUser[0]);
         return (
             <div>
                 <div className="content-wrapper">
@@ -543,20 +618,21 @@ class attendance extends Component {
                                                 </div>
                                             </div>
                                         </>
-                                        :
+                                        : dataUser[0].role == 2
+                                        ?
                                         <>
                                             <div className="col-lg-2">
                                                 {/* Large Size Modal */}
-                                                <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal">You Are Come In ?</button>
+                                                {/* 
                                                 {/* Modal */}
                                                 <div className="modal fade" id="formemodal" style={{ display: 'none' }} aria-hidden="true">
                                                     <div className="modal-dialog modal-md modal-dialog-centered">
                                                         <div className="modal-content">
                                                             <div className="card">
-                                                                <div className="card-header text-uppercase">You Are Come In ?</div>
+                                                                <div className="card-header text-uppercase">Danh sách học sinh</div>
 
                                                                 <div className="card-body">
-                                                                    <form onSubmit={this.handleInsertAttendance}>
+                                                                    <form onSubmit={this.handleInsertStudentLate}>
                                                                         <div className="row">
                                                                             <div className="col-12 col-lg-12 col-xl-12">
 
@@ -569,66 +645,40 @@ class attendance extends Component {
                                                                         onChange={this.handleChangeShift}
                                                                         options={this.state.listShift}
                                                                     /> */}
-                                                                                {
-                                                                                    dataUser.map((item, key) =>
-                                                                                        <div className="form-group row" key={key}>
-                                                                                            <label className="col-sm-12 col-form-label">Name</label>
-                                                                                            {/* <div className="col-sm-10">
-                                                                                <input type="cash" name="name" className="form-control"
-                                                                                    onChange={this.handleInputChange} value=
-                                                                                    {
-                                                                                        item.id !== 1
-                                                                                        ?
-                                                                                            "12"
-                                                                                            : ""
-                                                                                    } readOnly />
-                                                                            </div> */}
-                                                                                            <Select
-                                                                                                className="col-sm-10"
-                                                                                                value={selectedName}
-                                                                                                onChange={this.handleChangeName}
-                                                                                                options={this.state.listName}
-                                                                                                isDisabled={true}
-                                                                                            />
+                                                                                
 
-                                                                                            <label className="col-sm-12 col-form-label">Shift</label>
-                                                                                            {/* <div className="col-sm-10">
-                                                                                <input type="cash" name="shift" className="form-control"
-                                                                                    onChange={this.handleInputChange} value=
-                                                                                    {
-                                                                                        item.shift == 1
-                                                                                            ?
-                                                                                            "Sang"
-                                                                                            : item.shift == 2
-                                                                                                ? "Chieu"
-                                                                                                : "Toi"
-                                                                                    } readOnly />
-                                                                            </div> */}
-                                                                                            <Select
-                                                                                                className="col-sm-10"
-                                                                                                value={selectedShift}
-                                                                                                onChange={this.handleChangeShift}
-                                                                                                options={this.state.listShift}
-                                                                                                isDisabled={true}
-                                                                                            />
+                                                                                {/* {this.state.listStudent && this.state.listStudent.map((item) => 
+                                                                                    <div className="col">
+
+                                                                                        <label className="col-sm-12 col-form-label">{item.username}</label>
+                                                                                        <input type="checkbox" id="vehicle2" name="vehicle2" value="Car"></input>
+                                                                                    </div>
+                                                                        )} */}
+                                                                                <div className="card">
+                                                                                    <div className="card-body">
+                                                                                        <div className="table-responsive">
+                                                                                            <table className="table">
+                                                                                                <thead>
+                                                                                                    <tr>
+                                                                                                        <th scope="col">Tên học sinh</th>
+                                                                                                        <th scope="col">Không Có mặt</th>
+                                                                                                    </tr>
+                                                                                                </thead>
+                                                                                                <tbody>
+                                                                                                    {this.state.listStudent.map((item, key) =>
+                                                                                                        <tr key={key}>
+                                                                                                            <th>{item.username}</th>
+                                                                                                            <th><input type="checkbox" value={item.id_account} onChange={(e) => this.handleCheck(e, item)}/></th>
+                                                                                                        </tr>
+                                                                                                    )}
+                                                                                                </tbody>
+                                                                                            </table>
                                                                                         </div>
-                                                                                    )
-                                                                                }
-
-
-                                                                                <label className="col-sm-12 col-form-label">Time in</label>
-                                                                                <div className="col-sm-10">
-                                                                                    <input name="time_in" className="form-control"
-                                                                                        onChange={this.handleInputChange} value={new Date().toLocaleTimeString()} readOnly />
-                                                                                </div>
-                                                                                <label className="col-sm-12 col-form-label">Today</label>
-                                                                                <div className="col-sm-10">
-                                                                                    <input name="date" className="form-control"
-                                                                                        onChange={this.handleInputChange} value={new Date().toLocaleDateString()} readOnly />
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>{/*end row*/}
-                                                                        <button type="submit" className="btn btn-light px-5"><i className="icon-lock" />Yes</button>
+                                                                        </div>
+                                                                        <button type="submit" className="btn btn-light px-5">Nộp danh sách</button>
                                                                     </form>
                                                                 </div>
 
@@ -639,48 +689,404 @@ class attendance extends Component {
                                                 </div>
                                             </div>
                                             <div className="card">
-                                                <div className="card-body">
-                                                    <h5 className="card-title">List attendance of Employee</h5>
-                                                    <div className="table-responsive">
-                                                        <table className="table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th scope="col">No.</th>
-                                                                    <th scope="col">Name</th>
-                                                                    <th scope="col">Shift</th>
-                                                                    <th scope="col">Date</th>
-                                                                    <th scope="col">Time In</th>
-                                                                    <th scope="col">Time Out</th>
-                                                                    <th scope="col">Function</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {this.state.attendance.map((item, key) =>
-                                                                    <tr key={key}>
-                                                                        <th>{key + 1}</th>
-                                                                        <th>{item.name}</th>
-                                                                        <th>{item.shift_name}</th>
-                                                                        <th>{moment(item.date).format("L")}</th>
-                                                                        <th>{moment(item.time_in).format("HH:mm")}</th>
-                                                                        <th>{
-                                                                            moment(item.time_out).format("HH:mm") == "Invalid date"
-                                                                                ?
-                                                                                <p></p>
-                                                                                :
-                                                                                moment(item.time_out).format("HH:mm")
-                                                                        }</th>
-                                                                        <th>
-                                                                            <button type="button" className="btn btn-light waves-effect waves-light m-1"
-                                                                                data-toggle="modal" data-target="#formemodaledit" onClick={() => this.getDataAttendance(item)}> <i className="fa fa-edit" /></button>
-                                                                        </th>
-                                                                        {/* onClick={() => this.deleteattendance(item)} */}
-                                                                    </tr>)}
-                                                            </tbody>
-                                                        </table>
+                                               <div className="container text-center">
+                                                    <div className="row">
+                                                         <div className="col">
+                                                        Thứ/Buổi
+                                                        </div>
+                                                        <div className="col">
+                                                        Thứ 2
+                                                        </div>
+                                                        <div className="col">
+                                                        Thứ 3
+                                                        </div>
+                                                        <div className="col">
+                                                         Thứ 4
+                                                        </div>
+                                                        <div className="col">                                                                                                        
+                                                        Thứ 5 
+                                                        </div>
+                                                        <div className="col">
+                                                        Thứ 6
+                                                        </div>
                                                     </div>
+                                                    {this.state.schedule.map((item, key) =>
+                                                        <div>
+                                                                {item.day === 0 ? 
+                                                                    <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    1
+                                                                </div>
+                                                                <div className="col">
+                                                                    {item.slot === 1 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 2 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 3 && item.name }
+                                                                </div>
+                                                                <div className="col">                                                                                                        
+                                                                 {item.slot === 4 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 5 && item.name }
+                                                                </div>    
+                                                                </div>
+                                                                : 
+                                                                 <div className="row" key={key}>
+                                                                    <div className="col">
+                                                                        1
+                                                                    </div>
+                                                                    <div className="col">
+                                                                        ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">                                                                                                        
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>    
+                                                                </div>
+                                                                }
+                                                              
+                                                                  {item.day === 1 ? 
+                                                                    <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    2
+                                                                </div>
+                                                                <div className="col">
+                                                                    {item.slot === 1 && item.name }
+                                                                </div>
+                                                                    <div className="col">
+                                                                 {item.slot === 2 && item.name }
+                                                                </div>
+                                                                    <div className="col">
+                                                                        <button className="btn btn-light btn-block m-1" data-toggle="modal" data-target="#formemodal" onClick={() => {this.getListAccount(item)}}>{item.slot === 3 && item.name }</button>
+                                                                        
+                                                                 
+                                                                </div>
+                                                                <div className="col">                                                                                                        
+                                                                 {item.slot === 4 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 5 && item.name }
+                                                                </div>    
+                                                                </div>
+                                                                : 
+                                                                 <div className="row" key={key}>
+                                                                    <div className="col">
+                                                                        2
+                                                                    </div>
+                                                                    <div className="col">
+                                                                        ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">                                                                                                        
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>    
+                                                                </div>
+                                                            }
+                                                            {item.day === 2 ? 
+                                                                    <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    3
+                                                                </div>
+                                                                <div className="col">
+                                                                    {item.slot === 1 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 2 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 3 && item.name }
+                                                                </div>
+                                                                <div className="col">                                                                                                        
+                                                                 {item.slot === 4 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 5 && item.name }
+                                                                </div>    
+                                                                </div>
+                                                                : 
+                                                                 <div className="row" key={key}>
+                                                                    <div className="col">
+                                                                        3
+                                                                    </div>
+                                                                    <div className="col">
+                                                                        ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">                                                                                                        
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>    
+                                                                </div>
+                                                            }
+                                                            
+                                                            {item.day === 3 ? 
+                                                                    <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    4
+                                                                </div>
+                                                                <div className="col">
+                                                                    {item.slot === 1 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 2 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 3 && item.name }
+                                                                </div>
+                                                                <div className="col">                                                                                                        
+                                                                 {item.slot === 4 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 5 && item.name }
+                                                                </div>    
+                                                                </div>
+                                                                : 
+                                                                 <div className="row" key={key}>
+                                                                    <div className="col">
+                                                                        4
+                                                                    </div>
+                                                                    <div className="col">
+                                                                        ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">                                                                                                        
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>    
+                                                                </div>
+                                                            }
+                                                            {item.day === 4 ? 
+                                                                    <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    5
+                                                                </div>
+                                                                <div className="col">
+                                                                    {item.slot === 1 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 2 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 3 && item.name }
+                                                                </div>
+                                                                <div className="col">                                                                                                        
+                                                                 {item.slot === 4 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 5 && item.name }
+                                                                </div>    
+                                                                </div>
+                                                                : 
+                                                                 <div className="row" key={key}>
+                                                                    <div className="col">
+                                                                        5
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">                                                                                                        
+                                                                    ...
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    ...
+                                                                    </div>    
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
-                                        </>
+                                            </>
+                                            :
+                                            <>
+                                              <div className="card">
+                                               <div className="container text-center">
+                                                    <div className="row">
+                                                         <div className="col">
+                                                        Thứ/Buổi
+                                                        </div>
+                                                        <div className="col">
+                                                        Thứ 2
+                                                        </div>
+                                                        <div className="col">
+                                                        Thứ 3
+                                                        </div>
+                                                        <div className="col">
+                                                         Thứ 4
+                                                        </div>
+                                                        <div className="col">                                                                                                        
+                                                        Thứ 5 
+                                                        </div>
+                                                        <div className="col">
+                                                        Thứ 6
+                                                        </div>
+                                                    </div>
+                                                    {this.state.listSchedule.map((item, key) =>
+                                                        <div>
+                                                                {item.day === 0 &&
+                                                                <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    1
+                                                                </div>
+                                                                <div className="col">
+                                                                    {item.slot === 1 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 2 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 3 && item.name }
+                                                                </div>
+                                                                <div className="col">                                                                                                        
+                                                                 {item.slot === 4 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 5 && item.name }
+                                                                </div>    
+                                                                </div>
+                                                                }
+                                                              
+                                                                  {item.day === 1 &&
+                                                                    <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    2
+                                                                    </div>
+                                                                    <div className="col">
+                                                                        {item.slot === 1 && item.name }
+                                                                    </div>
+                                                                        <div className="col">
+                                                                    {item.slot === 2 && item.name }
+                                                                    </div>
+                                                                        <div className="col">
+                                                                        {item.slot === 3 && item.name }
+                                                                    </div>
+                                                                    <div className="col">                                                                                                        
+                                                                    {item.slot === 4 && item.name }
+                                                                    </div>
+                                                                    <div className="col">
+                                                                    {item.slot === 5 && item.name }
+                                                                    </div>    
+                                                                </div>
+                                                            }
+                                                            {item.day === 2 &&
+                                                                <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    3
+                                                                </div>
+                                                                <div className="col">
+                                                                    {item.slot === 1 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 2 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 3 && item.name }
+                                                                </div>
+                                                                <div className="col">                                                                                                        
+                                                                 {item.slot === 4 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 5 && item.name }
+                                                                </div>    
+                                                                </div>
+                                                               
+                                                            }
+                                                            
+                                                            {item.day === 3 &&
+                                                                    <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    4
+                                                                </div>
+                                                                <div className="col">
+                                                                    {item.slot === 1 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 2 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 3 && item.name }
+                                                                </div>
+                                                                <div className="col">                                                                                                        
+                                                                 {item.slot === 4 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 5 && item.name }
+                                                                </div>    
+                                                                </div>
+                                                                
+                                                            }
+                                                            {item.day === 4 &&
+                                                                    <div className="row" key={key}>
+                                                                  <div className="col">
+                                                                    5
+                                                                </div>
+                                                                <div className="col">
+                                                                    {item.slot === 1 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 2 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 3 && item.name }
+                                                                </div>
+                                                                <div className="col">                                                                                                        
+                                                                 {item.slot === 4 && item.name }
+                                                                </div>
+                                                                <div className="col">
+                                                                 {item.slot === 5 && item.name }
+                                                                </div>    
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    )}
+                                                    </div>
+                                                    
+                                                </div>
+                                            <div className="card">
+                                                        {this.state.student_late.map((item) => {
+                                                            return <div>Học sinh {dataUser[0].name} đã đi muộn ngày {new Date(item.date).getDate()}/ {new Date(item.date).getMonth()}</div>
+                                                        })}
+                                                    </div>
+                                            </>
                                 }
 
                                 {/* Modal */}

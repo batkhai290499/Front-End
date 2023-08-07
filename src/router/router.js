@@ -46,6 +46,7 @@ class router extends Component {
                         dataUser[0].role == 2 //role 2 is Manager Product
                             ?
                             <>
+                                <Route path="/attendance" component={attendance} />
                                 <Route path="/producer" component={producter} />
                             </>
                             :

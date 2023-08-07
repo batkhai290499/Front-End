@@ -15,7 +15,8 @@ class resign extends Component {
             status: '',
             news: [],
             resignById: [],
-            id_resign1: ''
+            id_resign1: '',
+            detail: '',
         }
     }
     componentDidMount() {
@@ -126,6 +127,7 @@ class resign extends Component {
             })
             .catch(error => console.log(error));
     };
+
     render() {
         return (
             <div>
@@ -168,7 +170,7 @@ class resign extends Component {
                                 </div>
                             </div>
 
-                            <div className="col-lg-4">
+                            {/* <div className="col-lg-4">
                                 <div id="accordion3">
                                     <div className="card mb-2">
                                         <div className="card-header bg-success">
@@ -207,34 +209,40 @@ class resign extends Component {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="row">
                             <div className="col-lg-12">
                                 <div className="card">
                                     <div className="card-body">
-                                        <h5 className="card-title">List Resign</h5>
+                                        <h5 className="card-title">Danh sách tin tức</h5>
                                         <div className="table-responsive">
                                             <table className="table">
                                                 <thead>
                                                     <tr>
                                                         <th scope="col">No.</th>
-                                                        <th scope="col">Name</th>
+                                                        {/* <th scope="col">Name</th> */}
                                                         <th scope="col">Title</th>
                                                         <th scope="col">Content</th>
                                                         <th scope="col">Date</th>
-                                                        <th scope="col">Status</th>
+                                                        {/* <th scope="col">Status</th> */}
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     {this.state.resign.map((item, key) =>
                                                         <tr key={key}>
                                                             <th>{key + 1}</th>
-                                                            <th>{item.id_account}</th>
+                                                            {/* <th>{item.id_account}</th> */}
                                                             <th>{item.title}</th>
-                                                            <th>{item.content}</th>
+                                                            <th style={{ maxWidth: '200px' }}><div style={{
+                                                                  whiteSpace: 'nowrap', 
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis',
+                                                            }}>{item.content}</div></th>
                                                             <th>{moment(item.date).format("DD/MM/YYYY")}</th>
-                                                            <th>{item.status}</th>
+                                                            {/* <th>{item.status}</th> */}
+                                                            <th>  <button type="button" className="btn btn-light waves-effect waves-light m-1"
+                                                                    data-toggle="modal" data-target="#formemodaledit" onClick={() => this.setState({detail: item})}> <i className="fa fa-edit" /></button></th>
                                                         </tr>)}
                                                 </tbody>
                                             </table>
@@ -243,7 +251,20 @@ class resign extends Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="row">
+                         <div className="modal fade" id="formemodaledit" style={{ display: 'none' }} aria-hidden="true">
+                                    <div className="modal-dialog modal-md modal-dialog-centered">
+                                        <div className="modal-content">
+                                            <div className="card">
+                                                <div className="card-header text-uppercase">Chi tiết tin tức</div>
+                                                <div className="card-body">
+                                                  <div>Title:  {this.state.detail.title}</div>  
+                                                  <div>Content: {this.state.detail.content}</div>  
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                        {/* <div className="row">
                             <div className="col-lg-12">
                                 <div className="card">
                                     <div className="card-body">
@@ -319,7 +340,7 @@ class resign extends Component {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
                     </div>
                 </div>
